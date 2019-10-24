@@ -34,7 +34,7 @@ SIGNAL out_ula_signed: signed(dataWidth - 1 downto 0);
 
 SIGNAL RAM_READ_WRITE, escreve_in_c, op_ula, carry, pc_enable: std_logic;
 
-SIGNAL TRINTAE1ZEROS: std_logic_vector(dataWidth - 2 downto 0) := (others => '0');
+SIGNAL TRINTAE1ZEROS: std_logic_vector(dataWidth - 4 downto 0) := (others => '0');
 
 
 begin
@@ -73,7 +73,7 @@ begin
 	 
 	 
 	 
-	 ADDER_1 : ENTITY work.ADDER GENERIC MAP (n => addrWidth) PORT MAP (A => TRINTAE1ZEROS & '1' , B => out_pc, sum => out_adder_saida, carry => carry); --define generic default for data n & larguraDados
+	 ADDER_1 : ENTITY work.ADDER GENERIC MAP (n => addrWidth) PORT MAP (A => TRINTAE1ZEROS & "100" , B => out_pc, sum => out_adder_saida, carry => carry); --define generic default for data n & larguraDados
 	 
 	 
 	 PC : ENTITY work.registradorGenerico GENERIC MAP (larguraDados => addrWidth)PORT MAP(data => out_adder_saida, clk => CLK, enable => pc_enable, q => out_pc, RST => '0');

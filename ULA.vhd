@@ -17,14 +17,17 @@ entity ULA is
 		a		: in signed ((DATA_WIDTH-1) downto 0);
 		b		: in signed ((DATA_WIDTH-1) downto 0);
 		--add_sub : in std_logic;
-		func_ula : in std_logic_vector(3 downto 0);
+		func_ula : in std_logic_vector(5 downto 0);
 		result	: out signed ((DATA_WIDTH-1) downto 0)
 	);
 
 end entity;
 
 architecture rtl of ULA is
+SIGNAL func_ula_3: std_logic_vector ( 3 downto 0);
 begin
+
+	func_ula_3 <= func_ula( 3 downto 0);
 
 	process(a,b, func_ula)
 	begin
@@ -36,16 +39,16 @@ begin
 --		end if;
 		
 		
-		if (func_ula = x"20") then 
+		if (func_ula = x"020") then 
 			result <= a + b;
 		
-		elsif  (func_ula = x"22") then
+		elsif  (func_ula_3 = x"22") then
 			result <= a - b;
-		elsif  (func_ula = x"24") then
+		elsif  (func_ula_3 = x"24") then
 			result <= a and b;
-		elsif  (func_ula = x"25") then
+		elsif  (func_ula_3 = x"25") then
 			result <= a or b;
-		elsif  (func_ula = x"2A") then
+		elsif  (func_ula_3 = x"2A") then
 			result <= (others => '0');
 			if (a<b) then
 				result <= result((DATA_WIDTH-1) downto 1) & '1';

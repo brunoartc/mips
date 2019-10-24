@@ -27,37 +27,9 @@ architecture rtl of ULA is
 SIGNAL func_ula_3: std_logic_vector ( 3 downto 0);
 begin
 
-	func_ula_3 <= func_ula( 3 downto 0);
 
-	process(a,b, func_ula)
-	begin
-		-- Add if "add_sub" is 1, else subtract default
---		if (add_sub = '1') then
---			result <= a + b;
---		else
---			result <= a - b;
---		end if;
-		
-		
-		if (func_ula = x"020") then 
-			result <= a + b;
-		
-		elsif  (func_ula_3 = x"22") then
-			result <= a - b;
-		elsif  (func_ula_3 = x"24") then
-			result <= a and b;
-		elsif  (func_ula_3 = x"25") then
-			result <= a or b;
-		elsif  (func_ula_3 = x"2A") then
-			result <= (others => '0');
-			if (a<b) then
-				result <= result((DATA_WIDTH-1) downto 1) & '1';
-			else 
-				result <= result((DATA_WIDTH-1) downto 1) & '0';
-			end if;
-			
-		end if;
-		
-	end process;
-
+	result <= (a+b) WHEN (func_ula="100000") ELSE
+	(a-b);
+	
+	
 end rtl;

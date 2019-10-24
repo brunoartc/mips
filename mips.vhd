@@ -61,7 +61,7 @@ begin
 	 ULA : ENTITY work.ULA GENERIC MAP (DATA_WIDTH => addrWidth) PORT MAP (
         a        => signed(in_ula_a),
         b       => signed(in_ula_b),
-		  func_ula => out_ROM(29 downto 26),
+		  func_ula => out_ROM(5 downto 0),
         result       => out_ula_signed
     );
 	 
@@ -76,7 +76,7 @@ begin
 	 ADDER_1 : ENTITY work.ADDER GENERIC MAP (n => addrWidth) PORT MAP (A => TRINTAE1ZEROS & '1' , B => out_pc, sum => out_adder_saida, carry => carry); --define generic default for data n & larguraDados
 	 
 	 
-	 PC : ENTITY work.registradorGenerico GENERIC MAP (larguraDados => addrWidth)PORT MAP(data => out_adder_saida, clk => CLK, enable => '1', q => out_pc, RST => '0');
+	 PC : ENTITY work.registradorGenerico GENERIC MAP (larguraDados => addrWidth)PORT MAP(data => out_adder_saida, clk => CLK, enable => pc_enable, q => out_pc, RST => '0');
 	
 	 
 	 DECODER : ENTITY work.decoder PORT MAP(opcode => out_ROM(31 downto 26), escreve_in_c => escreve_in_c, pc_enable => pc_enable);

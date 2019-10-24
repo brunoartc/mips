@@ -34,6 +34,19 @@ architecture comportamento of bancoRegistradores is
 
     -- Declaracao dos registradores:
     shared variable registrador : memoria_t;
+	 
+	 
+	 
+	 function initMemory
+        return memoria_t is variable tmp : memoria_t := (others => (others => '0'));
+  begin
+        -- Inicializa os endereços:
+        tmp(9) :=  x"A829472A";
+        tmp(10) := x"438492A2";
+        tmp(11) := x"41233AB3";
+        return tmp;
+    end initMemory;
+	 
 
 begin
     process(clk) is

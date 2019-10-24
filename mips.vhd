@@ -15,7 +15,8 @@ entity mips is
 
 	port 
 	(
-	clk : in std_logic
+	clk : in std_logic;
+	ula_out : out std_logic_vector(dataWidth - 1 downto 0)
 
 	);
 
@@ -43,7 +44,7 @@ begin
 
 	imediate <= out_ROM(15 downto 0);
 
-	ROM: ENTITY work.memoria GENERIC MAP (dataWidth => dataWidth, addrWidth => addrWidth) PORT MAP (Endereco => out_pc , Dado=>out_ROM);
+	ROM: ENTITY work.romMif GENERIC MAP (dataWidth => dataWidth, addrWidth => addrWidth) PORT MAP (Endereco => out_pc , Dado=>out_ROM);
 
 	
 	BR: ENTITY work.bancoRegistradores PORT MAP (
@@ -70,7 +71,7 @@ begin
 	 
 	 
 	 
-	 
+	 ula_out <= out_ula;
 	 
 	 
 	 ADDER_1 : ENTITY work.ADDER GENERIC MAP (n => addrWidth) PORT MAP (A => TRINTAE1ZEROS & "100" , B => out_pc, sum => out_adder_saida, carry => carry); --define generic default for data n & larguraDados

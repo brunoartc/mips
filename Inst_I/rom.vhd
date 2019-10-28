@@ -1,56 +1,30 @@
--- Quartus Prime VHDL Template
--- Single-Port ROM
 
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity single_port_rom is
+entity rom is
 
-	generic 
-	(
-		DATA_WIDTH : natural := 8;
-		ADDR_WIDTH : natural := 8
-	);
+    generic
+    (
+        dataWidth : natural := 8;
+        addrWidth : natural := 8
+    );
 
-	port 
-	(
-		clk		: in std_logic;
-		addr	: in natural range 0 to 2**ADDR_WIDTH - 1;
-		q		: out std_logic_vector((DATA_WIDTH -1) downto 0)
-	);
-
+    port (
+          Endereco : in std_logic_vector (addrWidth-1 DOWNTO 0);
+          Dado : out std_logic_vector (dataWidth-1 DOWNTO 0)
+    );
 end entity;
 
-architecture rtl of single_port_rom is
+architecture initFileROM of rom is
 
-	-- Build a 2-D array type for the ROM
-	subtype word_t is std_logic_vector((DATA_WIDTH-1) downto 0);
-	type memory_t is array(2**ADDR_WIDTH-1 downto 0) of word_t;
-
-	function init_rom
-		return memory_t is 
-		variable tmp : memory_t := (others => (others => '0'));
-	begin 
-		for addr_pos in 0 to 2**ADDR_WIDTH - 1 loop 
-			-- Initialize each address with the address itself
-			tmp(addr_pos) := std_logic_vector(to_unsigned(addr_pos, DATA_WIDTH));
-		end loop;
-		return tmp;
-	end init_rom;	 
-
-	-- Declare the ROM signal and specify a default value.	Quartus Prime
-	-- will create a memory initialization file (.mif) based on the 
-	-- default value.
-	signal rom : memory_t := init_rom;
+type memory_t is array (2**addrWidth -1 downto 0) of std_logic_vector (dataWidth-1 downto 0);
+signal content: memory_t;
+attribute ram_init_file : string;
+attribute ram_init_file of content:
+signal is "rom.mif";
 
 begin
-
-	process(clk)
-	begin
-	if(rising_edge(clk)) then
-		q <= rom(addr);
-	end if;
-	end process;
-
-end rtl;
+   Dado <= content(to_integer(unsigned(Endereco)));
+end architecture;

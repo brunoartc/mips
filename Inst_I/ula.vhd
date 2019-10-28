@@ -7,10 +7,12 @@ use ieee.std_logic_arith.all;
 
 entity ALU is
 
-port(	A:	in std_logic_vector(1 downto 0);
+port(
+	A:	in std_logic_vector(1 downto 0);
 	B:	in std_logic_vector(1 downto 0);
 	Sel:	in std_logic_vector(2 downto 0);
-	Res:	out std_logic_vector(1 downto 0)  
+	Res:	out std_logic_vector(1 downto 0);
+	Z: 		out std_logic
 );
 
 end ALU;
@@ -18,37 +20,20 @@ end ALU;
 ---------------------------------------------------
 
 architecture behv of ALU is
-begin					   
+begin
+	
+	Res <= signed(A) + signed(B) when Sel = "000"  			-- add
 
-    process(A,B,Sel)
-    begin
-    
-	-- use case statement to achieve 
-	-- different operations of ALU
+	else Res <= unsigned(A) + unsigned(B) when Sel = "001"  -- add unsigned
 
-	case Sel is
-		-- Instruções R
-		
-		-- add 
-		when "000" => Res <= signed(A) + signed(B);
-		
-		-- add unsigned
-		when "001" => Res <= unsigned(A) + unsigned(B);
-		
-		-- nor
-		when "010" => Res <= A nor B;
-		
-		--or
-		when "011" => Res <= A or B;
-		
-		-- and
-		when "100" => Res <= A and B;
+	else Res <= A nor B when Sel = "010"					-- nor
 
-	    when others =>	 
-		Res <= "XX";
-        end case;
+	else Res <= A or B when Sel "011"						--or
 
-    end process;
+	else Res <= A and B when Sel "100"						--and
+
+	else Res <= "XXX"
+
 
 end behv;
 

@@ -15,11 +15,13 @@ entity inst_i is
 end entity;
 
 ARCHITECTURE arch OF inst_i is
-    SIGNAL out_rom, out_pc, out_ram, out_adder, out_reg1, out_reg2, out_ula, imediato, out_mux2, out_mux3, out_mux4, out_shifter: STD_LOGIC_VECTOR(31 DOWNTO 0);
-	 SIGNAL out_pc_unsigned, out_shifter_unsigned, out_adder_unsigned : unsigned(31 DOWNTO 0);
+    SIGNAL out_pc_unsigned, out_shifter_unsigned, out_adder_unsigned, out_adder1_unsigned, out_adder2_unsigned : unsigned(31 DOWNTO 0);
+	 SIGNAL out_rom, out_pc, out_pc_vector, out_ram, out_adder, out_reg1, out_reg2, out_ula, imediato, out_mux2, out_mux3, out_mux4, out_shifter, out_adder1, out_adder2: STD_LOGIC_VECTOR(31 DOWNTO 0);
     SIGNAL out_mux1 : STD_LOGIC_VECTOR(4 DOWNTO 0);
     SIGNAL sel_ula: STD_LOGIC_VECTOR(2 DOWNTO 0); -- aumentar conforme adicionamos instruções
-    SIGNAL write_enable, sel_mux1, sel_mux2, sel_mux3, sel_mux4, sig_z, read_write_ram:STD_LOGIC;
+    SIGNAL write_enable, sel_mux1, sel_mux2, sel_mux3, sel_mux4, sig_z, read_write_ram, beq:STD_LOGIC;
+
+	 
 
     begin		
     ---------------------------------------------------------------------------------------------------------
@@ -106,7 +108,7 @@ ARCHITECTURE arch OF inst_i is
                 Sel => sel_ula, 
                 Res => out_ula,
                 Z   => sig_z
-                );
+             );
     ---------------------------------------------------------------------------------------------------------
         RAM: entity work.ram
             GENERIC MAP (
@@ -128,27 +130,74 @@ ARCHITECTURE arch OF inst_i is
             dado_entrada => imediato,
             dado_saida   => out_shifter
             );
-    ---------------------------------------------------------------------------------------------------------
-        ADDER: entity work.unsigned_adder
-            GENERIC MAP
-            (
-            DATA_WIDTH => 32
+	 ---------------------------------------------------------------------------------------------------------
+			ADDER_2: entity work.unsigned_adder
+            GENERIC MAP(
+                DATA_WIDTH => 32
             )
-            PORT MAP
-            (
-            a => out_pc_unsigned,
-				b => out_shifter_unsigned,
-            result => out_adder_unsigned
-				);
+            PORT MAP(
+                a => out_adder1_unsigned,
+                b => unsigned(out_shifter),
+                result => out_adder2_unsigned
+            );
 				
-				out_shifter <= std_logic_vector(out_shifter_unsigned);
+				out_adder1 <= std_logic_vector(out_adder1_unsigned);
+				--out_shifter <= std_logic_vector(out_shifter_unsigned);
+				out_adder2 <= std_logic_vector(out_adder2_unsigned);
+    ---------------------------------------------------------------------------------------------------------
+        EQUAL: entity work.equal
+        PORT MAP(
+            a => sig_z,
+            b => beq,
+            result => sel_mux4
+        );
+    ---------------------------------------------------------------------------------------------------------
+        MUX_4: entity work.muxGenerico  
+        -- between adder and PC
+            GENERIC MAP(
+                larguraDados => 32
+
+            )
+            PORT MAP(
+                IN_A => out_adder1,
+                IN_B => out_adder2,
+                sel => sel_mux4,
+                mux_out => out_mux4
+            );
+    ---------------------------------------------------------------------------------------------------------
+        PC: entity work.registradorGenerico 
+        GENERIC MAP(
+            larguraDados => 32
+            ) 
+        PORT MAP(
+            DIN => out_mux4, 
+            DOUT => out_pc, 
+            ENABLE => '1', 
+            CLK => clk,
+            RST => '0'
+            );
+    ---------------------------------------------------------------------------------------------------------
+        ADDER_1: entity work.unsigned_adder
+        GENERIC MAP(
+            DATA_WIDTH => 32
+        )
+        PORT MAP(
+            a => "00000000000000000000000000000100",
+            b => unsigned(out_pc),
+            result => out_adder1_unsigned
+        );
+		  
+		  
+			
+
+			out_adder1 <= std_logic_vector(out_adder1_unsigned);
 				
-				out_adder <= std_logic_vector(out_adder_unsigned);
 				
-				out_pc <= std_logic_vector(out_pc_unsigned);
+			out_adder <= std_logic_vector(out_adder_unsigned);
+				
 		
         
-        
+			-- out_pc <= out_pc_vector;
        
     end architecture;
 

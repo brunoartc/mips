@@ -1,0 +1,25 @@
+Quartus Prime Archive log --	/home/bruno/Documents/Insper/DesComp/mips/mips.qarlog
+
+Archive:	/home/bruno/Documents/Insper/DesComp/mips/mips.qar
+Date:		Thu Oct 24 23:54:14 2019
+Quartus Prime		18.1.0 Build 625 09/12/2018 SJ Standard Edition
+
+	=========== Files Selected: ===========
+/home/bruno/Documents/Insper/DesComp/mips/ADDER.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Atividade14.qpf
+/home/bruno/Documents/Insper/DesComp/mips/Atividade14.qsf
+/home/bruno/Documents/Insper/DesComp/mips/ULA.vhd
+/home/bruno/Documents/Insper/DesComp/mips/bancoRegistradores.vhd
+/home/bruno/Documents/Insper/DesComp/mips/decoder.vhd
+/home/bruno/Documents/Insper/DesComp/mips/estendeSinalGenerico.vhd
+/home/bruno/Documents/Insper/DesComp/mips/memoria.vhd
+/home/bruno/Documents/Insper/DesComp/mips/mips.vhd
+/home/bruno/Documents/Insper/DesComp/mips/registradorGenerico.vhd
+/home/bruno/Documents/Insper/DesComp/mips/romMif.vhd
+/home/bruno/Documents/Insper/DesComp/mips/single_port_ram.vhd
+/home/bruno/Documents/Insper/DesComp/mips/unsigned_adder.vhd
+/home/bruno/intelFPGA/18.1/quartus/linux64/assignment_defaults.qdf
+	======= Total: 14 files to archive =======
+
+	================ Status: ===============
+All files archived successfully.

@@ -1,33 +1,25 @@
-Quartus Prime Archive log --	/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/Inst_I.qarlog
+Quartus Prime Archive log --	/home/bruno/Documents/Insper/DesComp/mips/Inst_I/Inst_I.qarlog
 
-Archive:	/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/Inst_I.qar
-Date:		Thu Oct 17 15:01:22 2019
-Quartus Prime		18.1.0 Build 625 09/12/2018 SJ Lite Edition
+Archive:	/home/bruno/Documents/Insper/DesComp/mips/Inst_I/Inst_I.qar
+Date:		Mon Oct 28 22:40:00 2019
+Quartus Prime		18.1.0 Build 625 09/12/2018 SJ Standard Edition
 
 	=========== Files Selected: ===========
-/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/Inst_I.qpf
-/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/Inst_I.qsf
-/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/adder_un.vhd
-/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/banco_reg_misp.vhd
-/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/extensor_de_sinal.vhd
-/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/ram.vhd
-/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/rom.vhd
-/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/ula.vhd
-/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Projeto 1/Relog-io/Inst_I.vhd
-/home/alessandrab/intelFPGA_lite/18.1/quartus/linux64/assignment_defaults.qdf
-	======= Total: 10 files to archive =======
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/ALU.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/Inst_I.qpf
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/Inst_I.qsf
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/Inst_I.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/adder_un.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/bancoRegistradores.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/equal.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/extendeSinalGenerico.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/muxGenerico.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/ram.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/registradorGenerico.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/rom.vhd
+/home/bruno/Documents/Insper/DesComp/mips/Inst_I/shift_register.vhd
+/home/bruno/intelFPGA/18.1/quartus/linux64/assignment_defaults.qdf
+	======= Total: 14 files to archive =======
 
 	================ Status: ===============
 All files archived successfully.
-
-
-******* Archived project restoration attempt on Tue Oct 22 13:41:18 2019
-Source archive file:	/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/Inst_I.qar
-Archive was extracted into	/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/Inst_I_restored/
-		 - successfully.
-
-
-******* Archived project restoration attempt on Thu Oct 24 14:11:00 2019
-Source archive file:	/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/Inst_I.qar
-Archive was extracted into	/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/Inst_I_restored/
-		 - successfully.

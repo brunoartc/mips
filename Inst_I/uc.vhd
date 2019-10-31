@@ -24,22 +24,26 @@ architecture rtl of decoder is
 
 begin
 
+   beq             <= '1' when(i_opcode(5 downto 0) = x "04"   --beq
+						 else '0';
 
-   read_write_ram  <= '1' when(i_opcode(5 downto 0) = x "2B" or
-								opcode(3 downto 0) = x"20" or      
+   read_write_ram  <= '1' when(i_opcode(5 downto 0) = x "2B" or -- escrever = 1 & ler = 0 
+								opcode(3 downto 0) = x"20" or           -- store e instr R
 								opcode(3 downto 0) = x"22" or
 								opcode(3 downto 0) = x"24" or
 								opcode(3 downto 0) = x"25" or
-								opcode(3 downto 0) = x"2A"
+								opcode(3 downto 0) = x"2A" or 
+						else '0';
 
 								
-	sel_mux3        <= '1' when(i_opcode(5 downto 0) = x "2B"
+	sel_mux3        <= '1' when(i_opcode(5 downto 0) = x "2B"   --lw
 						else '0';
 						
 						
 						
-	sel_mux2        <= '1' when(i_opcode(5 downto 0) = x "2B" or
-								  when(i_opcode(5 downto 0) = x "23" 
+	sel_mux2        <= '1' when(i_opcode(5 downto 0) = x "2B" or -- 1 para lw, sw e beq e 0 para o resto
+								  when(i_opcode(5 downto 0) = x "23" or
+								  when(i_opcode(5 downto 0) = x "04"
 						else '0';
 						
 						

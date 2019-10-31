@@ -1,6 +1,6 @@
 Archive Project report for Inst_I
-Thu Oct 17 15:01:22 2019
-Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+Mon Oct 28 22:40:00 2019
+Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Standard Edition
 
 
 ---------------------
@@ -35,9 +35,9 @@ refer to the applicable agreement for further details.
 +----------------------------------------------------------------+
 ; Archive Project Summary                                        ;
 +------------------------+---------------------------------------+
-; Archive Project Status ; Successful - Thu Oct 17 15:01:22 2019 ;
+; Archive Project Status ; Successful - Mon Oct 28 22:40:00 2019 ;
 ; Revision Name          ; Inst_I                                ;
-; Top-level Entity Name  ; Inst_I                                ;
+; Top-level Entity Name  ; ALU                                   ;
 ; Family                 ; Cyclone V                             ;
 +------------------------+---------------------------------------+
 
@@ -49,45 +49,41 @@ Info: File Set 'Source control' contains:
     Info: Project source and settings files
     Info: Automatically detected source files
 Warning: Hierarchical Platform Designer systems and custom IP components(_hw.tcl and associated files) are not archived by the Quartus Archiver
-Warning: Excluding 'Automatically detected source files' The Quartus Prime software may not be able to automatically locate all project files.
-Info: Parsing: extensor_de_sinal.vhd
-Info: Parsing: banco_reg_misp.vhd
-Info: Parsing: adder_un.vhd
-Info: Parsing: ula.vhd
-Info: Parsing: ram.vhd
-Info: Parsing: rom.vhd
-Info: Parsing: ../Projeto 1/Relog-io/Inst_I.vhd
 Info: Archive will store files relative to the closest common parent directory
-Info (13213): Using common directory /home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/
+Info (13213): Using common directory /home/bruno/Documents/Insper/DesComp/mips/Inst_I/
 Info: ----------------------------------------------------------
 Info: ----------------------------------------------------------
-Info: Generated archive '/home/alessandrab/Dropbox/Leca/Insper/6oSem/Design-Computadores/Inst I/Inst_I.qar'
+Info: Generated archive '/home/bruno/Documents/Insper/DesComp/mips/Inst_I/Inst_I.qar'
 Info: ----------------------------------------------------------
 Info: ----------------------------------------------------------
 Info: Generated report 'Inst_I.archive.rpt'
-Info (23030): Evaluation of Tcl script /home/alessandrab/intelFPGA_lite/18.1/quartus/common/tcl/apps/qpm/qar.tcl was successful
-Info: Quartus Prime Shell was successful. 0 errors, 2 warnings
-    Info: Peak virtual memory: 1052 megabytes
-    Info: Processing ended: Thu Oct 17 15:01:22 2019
-    Info: Elapsed time: 00:00:00
-    Info: Total CPU time (on all processors): 00:00:00
+Info (23030): Evaluation of Tcl script /home/bruno/intelFPGA/18.1/quartus/common/tcl/apps/qpm/qar.tcl was successful
+Info: Quartus Prime Shell was successful. 0 errors, 1 warning
+    Info: Peak virtual memory: 1025 megabytes
+    Info: Processing ended: Mon Oct 28 22:40:00 2019
+    Info: Elapsed time: 00:00:01
+    Info: Total CPU time (on all processors): 00:00:01
 
 
-+-------------------------------------------------------------------------------+
-; Files Archived                                                                ;
-+-------------------------------------------------------------------------------+
-; File Name                                                                     ;
-+-------------------------------------------------------------------------------+
-; ../Projeto 1/Relog-io/Inst_I.vhd                                              ;
-; /home/alessandrab/intelFPGA_lite/18.1/quartus/linux64/assignment_defaults.qdf ;
-; adder_un.vhd                                                                  ;
-; banco_reg_misp.vhd                                                            ;
-; extensor_de_sinal.vhd                                                         ;
-; Inst_I.qpf                                                                    ;
-; Inst_I.qsf                                                                    ;
-; ram.vhd                                                                       ;
-; rom.vhd                                                                       ;
-; ula.vhd                                                                       ;
-+-------------------------------------------------------------------------------+
++--------------------------------------------------------------------+
+; Files Archived                                                     ;
++--------------------------------------------------------------------+
+; File Name                                                          ;
++--------------------------------------------------------------------+
+; /home/bruno/intelFPGA/18.1/quartus/linux64/assignment_defaults.qdf ;
+; adder_un.vhd                                                       ;
+; ALU.vhd                                                            ;
+; bancoRegistradores.vhd                                             ;
+; equal.vhd                                                          ;
+; extendeSinalGenerico.vhd                                           ;
+; Inst_I.qpf                                                         ;
+; Inst_I.qsf                                                         ;
+; Inst_I.vhd                                                         ;
+; muxGenerico.vhd                                                    ;
+; ram.vhd                                                            ;
+; registradorGenerico.vhd                                            ;
+; rom.vhd                                                            ;
+; shift_register.vhd                                                 ;
++--------------------------------------------------------------------+
 
 

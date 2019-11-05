@@ -11,6 +11,7 @@ entity decoder is
 	 i_opcode : in std_logic_vector(5 downto 0);
 	 opcode : in std_logic_vector(5 downto 0);
     ula_enable, write_enable, sel_mux1, sel_mux2, sel_mux3, read_write_ram, beq  : out std_logic;
+	 op_ula : in std_logic_vector(1 downto 0);
     sel_ula: STD_LOGIC_VECTOR(2 DOWNTO 0);
 	
 
@@ -66,8 +67,8 @@ begin
 								opcode(3 downto 0) = x"2A" ))
 						else '0';
 	
-	
-	ula_enable 		<= '1' when (opcode(5 downto 4) = x"0" and (   --OPCODE TIPO R
+	-- TODO: CHANGE TO BE ALUOP 
+	ula_enable 		<= '1' when (opcode(5 downto 4) = x"0" and (   --OPCODE TIPO R 
 	
 								opcode(3 downto 0) = x"20" or      --INSTRUÇOES TIPO R
 								opcode(3 downto 0) = x"22" or

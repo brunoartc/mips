@@ -11,11 +11,16 @@ entity ULA_MIPS is
 		clk:           in std_logic;
 		A:             in std_logic_vector(data_width - 1 downto 0);
 		B:             in std_logic_vector(data_width - 1 downto 0);
-		invertA:       in std_logic;
-		invertB:       in std_logic;
-		vai:           in std_logic;
-		vem:           in std_logic;
-		selection:     in std_logic_vector(1 downto 0);
+		invertA:       in std_logic;   --  vem da uc _ ula 
+		invertB:       in std_logic;   --  vem da uc _ ula
+		
+		vai:           out std_logic;
+		
+		op_ula:        in std_logic_vector(1 downto 0);
+		
+		selection:     in std_logic_vector(1 downto 0);  --  vem da uc _ ula
+		
+		
 		zero:          out std_logic;
 		result:        out std_logic_vector(data_width - 1 downto 0)
 		);
@@ -59,6 +64,8 @@ begin
 	signed_B <= signed(B);
 	
 	result <= sig_result;
+	
+	
 	
 	sig_result <= 	std_logic_vector(sig_and) when selection = "00" else								-- AND
 						std_logic_vector(sig_or) when selection = "01" else								-- OR

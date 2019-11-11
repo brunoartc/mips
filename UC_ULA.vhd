@@ -25,7 +25,17 @@ begin
 	
 	invertB <= '1' when op_ula = "10" or op_ula = "11"; --1 bit eh o func enable e o outro eh o OP
 	
+	selection <= 	"00" when funct = "100000" or funct = "100111" else --nor & and
+						"01" when funct = "100101" else -- or
+						"00"
+				
+	
 	selection <= "10" when op_ula =  "01";
+	
+	
+
+	
+	
 	
 				
 	 

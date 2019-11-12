@@ -1,23 +1,43 @@
--- Design de Computadores
--- file: UC_ULA.vhd
--- date: 18/10/2019
-
-library ieee;
-use ieee.std_logic_1164.all;
-use work.constantesMIPS.all;
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
 
 entity UC_ULA is
-	port
-    (
-        funct               : IN STD_LOGIC_VECTOR(FUNCT_WIDTH-1 DOWNTO 0);
-        ALUop               : IN STD_LOGIC_VECTOR(ALU_OP_WIDTH-1 DOWNTO 0);
-        ALUctr              : OUT STD_LOGIC_VECTOR(CTRL_ALU_WIDTH-1 DOWNTO 0)
-    );
+	generic (
+		data_width : natural  :=  32
+		);
+
+    PORT(
+		funct:           in std_logic_vector(5 downto 0);
+		op_ula:          in std_logic_vector(1 downto 0);
+
+		invertA:       out std_logic;
+		invertB:       out std_logic;
+		
+		selection:     out std_logic_vector(1 downto 0)
+		
+		
+		);
 end entity;
 
-architecture bhv of UC_ULA is	
-    signal ALUop_s : STD_LOGIC_VECTOR(ALU_OP_WIDTH-1 DOWNTO 0);
+ARCHITECTURE arch OF UC_ULA is
 begin
+	
+	invertB <= '1' when op_ula = "10" or op_ula = "11"; --1 bit eh o func enable e o outro eh o OP
+	
+	selection <= 	"00" when funct = "100000" or funct = "100111" else --nor & and
+						"01" when funct = "100101" else -- or
+						"00"
+				
+	
+	selection <= "10" when op_ula =  "01";
+	
+	
 
-
-end bhv;
+	
+	
+	
+				
+	 
+	
+end ARCHITECTURE;

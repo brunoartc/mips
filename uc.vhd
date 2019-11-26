@@ -1,83 +1,96 @@
--- Quartus Prime VHDL Template
--- Single port RAM with single read/write address 
+-- Design de Computadores
+-- file: uc.vhd
+-- date: 18/10/2019
 
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+use work.constantesMIPS.all;
 
-entity decoder is
-	port 
-	(
-	 i_opcode : in std_logic_vector(5 downto 0);
-	 opcode : in std_logic_vector(5 downto 0);
-    ula_enable, write_enable, sel_mux1, sel_mux2, sel_mux3, read_write_ram, beq  : out std_logic;
-    sel_ula: STD_LOGIC_VECTOR(2 DOWNTO 0);
-	
-
-	);
-
+entity uc is
+	port
+    (
+        opcode              	: IN STD_LOGIC_VECTOR(OPCODE_WIDTH-1 DOWNTO 0);
+        pontosDeControle    	: OUT STD_LOGIC_VECTOR(CONTROLWORD_WIDTH-1 DOWNTO 0)
+    );
 end entity;
 
-architecture rtl of decoder is
+architecture bhv of uc is
 
 
-
+SIGNAL muxJump, muxBeq, muxRtRd, habEscritaReg, muxRtimediato, muxUlaMem, beq, habLeituraMem,habEscritaMem,  muxUlaBanc : STD_LOGIC;
+SIGNAL ulaOp : STD_LOGIC_VECTOR(2 DOWNTO 0);
 begin
-
-   beq             <= '1' when(i_opcode(5 downto 0) = x "04"   --beq
-						 else '0';
-
-   read_write_ram  <= '1' when(i_opcode(5 downto 0) = x "2B" or -- escrever = 1 & ler = 0 
-								opcode(3 downto 0) = x"20" or           -- store e instr R
-								opcode(3 downto 0) = x"22" or
-								opcode(3 downto 0) = x"24" or
-								opcode(3 downto 0) = x"25" or
-								opcode(3 downto 0) = x"2A" or 
-						else '0';
-
-								
-	sel_mux3        <= '1' when(i_opcode(5 downto 0) = x "2B"   --lw
-						else '0';
+    --process(opcode)
+	 --begin
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 -- control points [ mux PC(beq & jump) , mux (rt / rd ), hab Escrita reg , mux rt/ imediato, ula op , mux ula mem, beq, hab leitura mem, hab escrita mem ]
+	 
+	 -- lw  	   R[rt] M[
+	 --			mux PC(beq & jump) = 0
+	 -- 			mux (rt / rd )
+	 
+	 muxJump <= 	'1' when opcode = opCodeTipoJ else
+							'0';
+							
+	muxBeq <= 	'1' when opcode = opCodeBEQ else
+							'0';
+	
+	muxRtRd <= 	'1' when opcode = opCodeTipoR else
+					'0';
+					
+	
+	 muxUlaBanc <= '1' when opcode = ctrlTipoLW or opcode = ctrlTipoSW else
+						'0';
+						
+	muxUlaMem <= '1' when opcode = ctrlTipoLW else
+						'0';
+						
+	habLeituraMem <= '1' when opcode = ctrlTipoLW else
+						'0';
+	
+	 habEscritaMem <= '1' when opcode = ctrlTipoSW else
+						'0';
+	
+	
+	habEscritaReg <= '1' when opcode = ctrlTipoLW or opcode = opCodeTipoR  else
+						'0';
 						
 						
-						
-	sel_mux2        <= '1' when(i_opcode(5 downto 0) = x "2B" or -- 1 para lw, sw e beq e 0 para o resto
-								  when(i_opcode(5 downto 0) = x "23" or
-								  when(i_opcode(5 downto 0) = x "04"
-						else '0';
-						
-						
+	ulaOp <= readFunctULA when opcode = opCodeTipoR else 
+				aluOpDC when opcode = opCodeTipoJ else 
+				aluOpSub when opcode = opCodeBEQ else 
+				aluOpAdd when opcode = ctrlTipoLW or opcode = ctrlTipoSW else
+				"000";
+				
+				
+	pontosDeControle <= ulaOp & habEscritaReg & habEscritaMem & habLeituraMem & muxUlaMem & muxRtRd & muxUlaBanc & muxBeq & muxJump;
+				
+	 
+	 -- sw
+	 -- add
+	 -- sub
+	 -- AND
+	 -- OR
+	 -- slt set less than
+	 -- beq branch equal
+	 -- j jump
+	 -- lui load upper immediate
+	 -- addi
+	 -- andi
+	 -- ori
+	 -- slti
+	 -- bne
+	 -- jal
+	 -- jr
+	 
+	 
+	 --end process;
 
-   sel_mux1        <= '1' when(opcode(5 downto 4) = x"0" and (
-								opcode(3 downto 0) = x"20" or      --INSTRUÇOES TIPO R
-								opcode(3 downto 0) = x"22" or
-								opcode(3 downto 0) = x"24" or
-								opcode(3 downto 0) = x"25" or
-								opcode(3 downto 0) = x"2A" ))
-						else '0';
-	
-
-	write_enable 	<= '1' when (opcode(5 downto 4) = x"0" and ( --OPCODE TIPO R
-	
-								opcode(3 downto 0) = x"20" or      --INSTRUÇOES TIPO R
-								opcode(3 downto 0) = x"22" or
-								opcode(3 downto 0) = x"24" or
-								opcode(3 downto 0) = x"25" or 
-								opcode(3 downto 0) = x"2A" ))
-						else '0';
-	
-	
-	ula_enable 		<= '1' when (opcode(5 downto 4) = x"0" and (   --OPCODE TIPO R
-	
-								opcode(3 downto 0) = x"20" or      --INSTRUÇOES TIPO R
-								opcode(3 downto 0) = x"22" or
-								opcode(3 downto 0) = x"24" or
-								opcode(3 downto 0) = x"25" or 
-								opcode(3 downto 0) = x"2A"))
-						else '0';
-	
-	
-
-	
-
-end rtl;
+end bhv;

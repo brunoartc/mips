@@ -52,6 +52,13 @@ architecture estrutural of fluxo_dados is
      
     -- Controle da ULA
     signal ULActr : std_logic_vector(CTRL_ALU_WIDTH-1 downto 0);
+	 
+	 -- Pipeline signals
+	 signal inMemEx : std_logic_vector(107-1 downto 0);
+	 signal inMemWb : std_logic_vector(76-1 downto 0);
+	 signal outMemMb : std_logic_vector(75-1 downto 0);
+	 signal isJmpOrBeq : std_logic;
+	 
 
     -- Codigos da palavra de controle:
     alias ULAop             : std_logic_vector(ALU_OP_WIDTH-1 downto 0) is pontosDeControle(10 downto 8);
@@ -261,5 +268,52 @@ begin
             seletor  => sel_mux_jump,
             saida    => saida_mux_jump
         );
+		  
+		  
+		  --- =================== PIPELINE ======================
+		  
+		  
+		ID_EX: entity work.registradorGenerico
+        generic map (
+		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 2 registradores
+			larguraDados => 107
+			)
+			port map(data => pontosDeControle  & instrucao_s & RA & RB,
+				 q => inMemEx, -- in da ula tmb
+				 enable => '1',
+				 CLK => clk,
+				 RST => isJmpOrBeq
+        );
+		  
+		  EX_MEM: entity work.registradorGenerico
+        generic map (
+		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 33 saida ula
+			larguraDados => 76
+			)
+			port map(data => inMemEx(106 downto 64) & saida_ula & Z_out, --possible wrong
+				 q => inMemWb, -- in da memoria tmb
+				 enable => '1',
+				 CLK => clk,
+				 RST => isJmpOrBeq
+        );
+		  
+		  MEM_MB: entity work.registradorGenerico
+        generic map (
+		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 32 saida mem
+			larguraDados => 75
+			)
+			port map(data => inMemWb(75 downto 33) & dado_lido_mem,
+				 q => outMemMb, --in do banco de registradores
+				 enable => '1',
+				 CLK => clk,
+				 RST => isJmpOrBeq
+        );
+		  
+		  
+		  
+		  
+		  
+		  
+		 
 
 end architecture;

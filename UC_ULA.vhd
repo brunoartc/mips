@@ -40,7 +40,7 @@ begin
 								and ALUop = aluOpSlt 
 					
 					------------ ELSE --------------
-					else '0';
+					else (others => '0');
 								
 					
 

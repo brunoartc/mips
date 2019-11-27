@@ -44,5 +44,9 @@ begin
         opcode              	=> opcode,
         pontosDeControle    	=> pontosDeControle
     );
+	 
+	 
+		  
+		  
 
 end architecture;

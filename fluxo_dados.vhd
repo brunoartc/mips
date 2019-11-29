@@ -13,7 +13,7 @@ entity fluxo_dados is
 	port
     (
         clk			            : IN STD_LOGIC;
-        pontosDeControle        : IN STD_LOGIC_VECTOR(CONTROLWORD_WIDTH-1 DOWNTO 0);
+        pontosDeControle        : IN STD_LOGIC_VECTOR(CONTROLWORD_WIDTH-1 DOWNTO 0); --mudar nos genericos
         instrucao               : OUT STD_LOGIC_VECTOR(DATA_WIDTH-1 DOWNTO 0)
     );
 end entity;
@@ -54,20 +54,24 @@ architecture estrutural of fluxo_dados is
     signal ULActr : std_logic_vector(CTRL_ALU_WIDTH-1 downto 0);
 	 
 	 -- Pipeline signals
-	 signal inMemEx : std_logic_vector(107-1 downto 0);
-	 signal inMemWb : std_logic_vector(76-1 downto 0);
-	 signal outMemMb : std_logic_vector(75-1 downto 0);
+	 signal inMemEx : std_logic_vector(109-1 downto 0);
+	 signal inMemWb : std_logic_vector(78-1 downto 0);
+	 signal outMemMb : std_logic_vector(77-1 downto 0);
 	 signal isJmpOrBeq : std_logic;
 	 
 
     -- Codigos da palavra de controle:
-    alias ULAop             : std_logic_vector(ALU_OP_WIDTH-1 downto 0) is pontosDeControle(10 downto 8);
-    alias escreve_RC        : std_logic is pontosDeControle(7);
-    alias escreve_RAM       : std_logic is pontosDeControle(6);
-    alias leitura_RAM       : std_logic is pontosDeControle(5);
-    alias sel_mux_ula_mem   : std_logic is pontosDeControle(4);
-    alias sel_mux_rd_rt     : std_logic is pontosDeControle(3);
-    alias sel_mux_banco_ula : std_logic is pontosDeControle(2);
+    alias ULAop             : std_logic_vector(ALU_OP_WIDTH-1 downto 0) is pontosDeControle(12 downto 10); --era 10 downto 8
+    alias escreve_RC        : std_logic is pontosDeControle(9); --era 7
+    alias escreve_RAM       : std_logic is pontosDeControle(8); --era 6
+    alias leitura_RAM       : std_logic is pontosDeControle(7); --era 5
+    
+	 
+	 alias sel_mux_ula_mem   : std_logic_vector is pontosDeControle(6 downto 5); --mudado era 4 e std_loc
+    alias sel_mux_rd_rt     : std_logic_vector is pontosDeControle(4 downto 3); --mudado era 3 e std_logic
+    
+	 
+	 alias sel_mux_banco_ula : std_logic is pontosDeControle(2);
     alias sel_beq           : std_logic is pontosDeControle(1);
     alias sel_mux_jump      : std_logic is pontosDeControle(0);
 
@@ -77,6 +81,14 @@ architecture estrutural of fluxo_dados is
     alias RD_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s(15 downto 11);
     alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao_s(5 DOWNTO 0);
     alias imediato  : std_logic_vector(15 downto 0) is instrucao_s(15 downto 0);
+	 
+	 
+	 -- Mux intermediario nao
+	 signal ZeroImediateMux, B : std_logic_vector(DATA_WIDTH-1 downto 0);
+	 signal sel_imed_zero_ext : std_logic;
+	 signal sel_tipo_extensao : std_logic_vector(1 downto 0);
+	 
+	 signal dezeseisZeros : std_logic_vector(16-1 downto 0) := (others => '0');
 
 begin
 
@@ -111,7 +123,7 @@ begin
         )
 		port map (
             A   => RA,
-            B   => saida_mux_banco_ula,
+            B   => saida_mux_banco_ula, -- anterior saida mux banco ula
             ctr => ULActr,
             C   => saida_ula,
             Z   => Z_out
@@ -214,27 +226,58 @@ begin
         );
     
     -- MUXs
-     mux_Ula_Memoria: entity work.muxGenerico2 
+--     mux_Ula_Memoria: entity work.muxGenerico2  --mudar
+--        generic map (
+--            larguraDados => DATA_WIDTH
+--        )
+--		port map (
+--            entradaA => saida_ula, 
+--            entradaB => dado_lido_mem, 
+--            seletor  => sel_mux_ula_mem,
+--            saida    => saida_mux_ula_mem
+--        );
+		  
+		mux_Ula_Memoria: entity work.muxGenerico4  --mudado
         generic map (
             larguraDados => DATA_WIDTH
         )
 		port map (
             entradaA => saida_ula, 
             entradaB => dado_lido_mem, 
+				entradaC => PC_mais_4,
+				entradaD => (others => 'X'),
             seletor  => sel_mux_ula_mem,
             saida    => saida_mux_ula_mem
         );
+		  
 	 
-     mux_Rd_Rt: entity work.muxGenerico2 
+--     mux_Rd_Rt: entity work.muxGenerico2 --mudar
+--        generic map (
+--            larguraDados => REGBANK_ADDR_WIDTH
+--        )
+--		port map (
+--            entradaA => RT_addr, 
+--            entradaB => RD_addr,
+--            seletor  => sel_mux_rd_rt,
+--            saida    => saida_mux_rd_rt
+--        );
+		  
+		  
+		mux_Rd_Rt: entity work.muxGenerico4 --mudado
         generic map (
             larguraDados => REGBANK_ADDR_WIDTH
         )
 		port map (
             entradaA => RT_addr, 
             entradaB => RD_addr,
+				entradaC => "11111",
+				entradaD => (others => 'X'),
             seletor  => sel_mux_rd_rt,
             saida    => saida_mux_rd_rt
         );
+		  
+		  
+		 
 	
      mux_Banco_Ula: entity work.muxGenerico2 
         generic map (
@@ -272,11 +315,11 @@ begin
 		  
 		  --- =================== PIPELINE ======================
 		  
-		  
+		  -- TROCAR AS LIGACOES
 		ID_EX: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 2 registradores
-			larguraDados => 107
+			larguraDados => 109
 			)
 			port map(data => pontosDeControle  & instrucao_s & RA & RB,
 				 q => inMemEx, -- in da ula tmb
@@ -288,9 +331,9 @@ begin
 		  EX_MEM: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 33 saida ula
-			larguraDados => 76
+			larguraDados => 78
 			)
-			port map(data => inMemEx(106 downto 64) & saida_ula & Z_out, --possible wrong
+			port map(data => inMemEx(108 downto 64) & saida_ula & Z_out, --possible wrong
 				 q => inMemWb, -- in da memoria tmb
 				 enable => '1',
 				 CLK => clk,
@@ -300,14 +343,45 @@ begin
 		  MEM_MB: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 32 saida mem
-			larguraDados => 75
+			larguraDados => 77
 			)
-			port map(data => inMemWb(75 downto 33) & dado_lido_mem,
+			port map(data => inMemWb(77 downto 33) & dado_lido_mem,
 				 q => outMemMb, --in do banco de registradores
 				 enable => '1',
 				 CLK => clk,
 				 RST => isJmpOrBeq
         );
+		  
+		  
+		  
+		  
+		  ------ ============== mux ULA ==============
+		  
+		  -- TROCAR AS LIGACOES 
+		  mux_zero_ext: entity work.muxGenerico2 
+        generic map (
+            larguraDados => DATA_WIDTH        -- TODO
+        )
+		port map (
+            entradaA => saida_mux_banco_ula,
+            entradaB => ZeroImediateMux,
+            seletor  => sel_imed_zero_ext,
+            saida    => B
+        ); 
+		  
+		  
+		  mux_extension_tipe: entity work.muxGenerico4 
+        generic map (
+            larguraDados => DATA_WIDTH     --TODO
+        )
+		port map (
+            entradaA => sinal_ext, --resto das utilidades
+            entradaB => (dezeseisZeros & imediato), --instrucoes com or immediate e and imeediate
+				entradaC => (imediato & dezeseisZeros), -- instrucoes load upper immediate
+				entradaD => (others => '0'),
+            seletor  => sel_tipo_extensao,
+            saida    => ZeroImediateMux
+        ); 
 		  
 		  
 		  

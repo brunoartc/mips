@@ -325,11 +325,25 @@ begin
         )
 		port map (
             entradaA => saida_mux_beq,
-            entradaB => PC_4_concat_imed,
+            entradaB => PC_4_concat_imed, --TODO: mudar para um mux de 4 portas e aumentar os pontos de controle
             seletor  => sel_mux_jump,
             saida    => saida_mux_jump
         );
 		  
+		 -- =================================================== TODO MUDAR P`ARA 
+--		mux_jump: entity work.muxGenerico4
+--        generic map (
+--            larguraDados => DATA_WIDTH
+--        )
+--		port map (
+--            entradaA => saida_mux_beq,
+--            entradaB => PC_4_concat_imed, 
+--            entradaC => RA, 
+--				entradaD => (others => 'X'), 
+--				seletor  => sel_mux_jump, --TODO: aumentar pontos de controle (WIP TODO: need funct in uc)
+--            saida    => saida_mux_jump
+--        );
+--		  
 		  
 		  --- =================== PIPELINE ======================
 		  

@@ -38,7 +38,11 @@ begin
 	 -- 			mux (rt / rd )
 	 
 	 muxJump <= 	'1' when opcode = opCodeTipoJ or opcode = opCodeJAL else
-							'0';
+							'0'; 
+							
+--	muxJump <= 	"01" when opcode = opCodeTipoJ or opcode = opCodeJAL else
+--					"10" when opcode = functJR else   ---precisa ser funct TODO: ARRUMAR UM MEIO
+--							"00"; 
 							
 	muxBeq <= 	'1' when opcode = opCodeBEQ else
 							'0';

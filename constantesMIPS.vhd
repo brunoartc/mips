@@ -48,7 +48,10 @@ package constantesMIPS is
 	 constant opCodeLUI         	: opCode_t := "001111"; --(consertado - sem utilidade)errado olhar greencard
 	 
 	 
-	 constant opCodeJAL         	: opCode_t := "000011"; --(consertado WIP)errado olhar greencard
+	 constant opCodeJAL         	: opCode_t := "000011"; --(consertado DONE)errado olhar greencard
+	 
+	 
+	constant functJR					: funct_t := "000011"; --WIP
 	 
     -- ALU ---
     constant readFunctULA : aluOp_t := "000";

@@ -9,6 +9,7 @@ package constantesMIPS is
   constant CONTROLWORD_WIDTH : natural := 13; --era 11
   constant DATA_WIDTH : natural := 32;
   constant ADDR_WIDTH : natural := 32;
+  constant JMP_ADDR_WIDTH : natural := 26;
   constant REGBANK_ADDR_WIDTH : natural := 5;
   constant ALU_OP_WIDTH : natural := 3;
   constant CTRL_ALU_WIDTH : natural := 4;
@@ -22,6 +23,8 @@ package constantesMIPS is
 
    subtype dado_t        is std_logic_vector(DATA_WIDTH-1 downto 0);
    subtype addr_t        is std_logic_vector(ADDR_WIDTH-1 downto 0);
+	
+	subtype mux_2        is std_logic_vector(1 downto 0);
 --
     constant functADD : funct_t := "100000";
     constant functSUB : funct_t := "100010";
@@ -37,13 +40,16 @@ package constantesMIPS is
 --
     constant opCodeTipoJ         : opCode_t := "000010";
 	 
-	 constant opCodeAddI         : opCode_t := "000010"; --errado olhar greencard
-	 constant opCodeAndI         : opCode_t := "000010"; --errado olhar greencard
-	 constant opCodeOrI         : opCode_t := "000010"; --errado olhar greencard
+	 constant opCodeAddI         	: opCode_t := "001000"; --(consertado - sem utilidade)errado olhar greencard
+	 constant opCodeAndI         	: opCode_t := "001100"; --(consertado - sem utilidade)errado olhar greencard
+	 constant opCodeOrI         	: opCode_t := "001101"; --(consertado - sem utilidade)errado olhar greencard
 	 
 	 
-	 constant opCodeLUI         : opCode_t := "000010"; --errado olhar greencard
-
+	 constant opCodeLUI         	: opCode_t := "001111"; --(consertado - sem utilidade)errado olhar greencard
+	 
+	 
+	 constant opCodeJAL         	: opCode_t := "000011"; --(consertado WIP)errado olhar greencard
+	 
     -- ALU ---
     constant readFunctULA : aluOp_t := "000";
     constant aluOpAdd : aluOp_t := "001";
@@ -89,6 +95,16 @@ package constantesMIPS is
     constant ctrlTipoBEQ:    ctrlWorld_t := aluOpSub & 		"00XXXXX010";
     constant ctrlTipoLW:     ctrlWorld_t := aluOpAdd & 		"1010100100";
     constant ctrlTipoSW:     ctrlWorld_t := aluOpAdd & 		"01XXXXX100";
+	 
+	 
+	 
+	 
+-- EXTENSORES DE SINAIS 
+
+	constant zerosADiretira:	mux_2	:=	"10";
+	constant zerosAEsquerda:	mux_2	:= "01";
+	constant extensorNormal:	mux_2	:= "00";
+	constant trintaedoiszeros:	mux_2	:=	"11";
 
 end package constantesMIPS;
 

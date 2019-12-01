@@ -33,7 +33,7 @@ architecture estrutural of fluxo_dados is
     signal Z_out : std_logic;
 
     -- Sinais auxiliares para a lógica do PC
-    signal PC_s, PC_mais_4, PC_mais_4_mais_imediato, entrada_somador_beq : std_logic_vector(DATA_WIDTH-1 downto 0);
+    signal PC_s, PC_mais_4, PC_mais_8, PC_mais_4_mais_imediato, entrada_somador_beq : std_logic_vector(DATA_WIDTH-1 downto 0);
 
     -- Sinais auxiliares para a RAM
     signal dado_lido_mem : std_logic_vector(DATA_WIDTH-1 downto 0);
@@ -61,6 +61,8 @@ architecture estrutural of fluxo_dados is
 	 
 
     -- Codigos da palavra de controle:
+	 --alias sel_tipo_extensao : std_logic_vector is pontosDeControle(15 downto 14); Para as instrucoes do tipo I
+	 --alias sel_imed_zero_ext : std_logic is pontosDeControle(13);
     alias ULAop             : std_logic_vector(ALU_OP_WIDTH-1 downto 0) is pontosDeControle(12 downto 10); --era 10 downto 8
     alias escreve_RC        : std_logic is pontosDeControle(9); --era 7
     alias escreve_RAM       : std_logic is pontosDeControle(8); --era 6
@@ -74,6 +76,12 @@ architecture estrutural of fluxo_dados is
 	 alias sel_mux_banco_ula : std_logic is pontosDeControle(2);
     alias sel_beq           : std_logic is pontosDeControle(1);
     alias sel_mux_jump      : std_logic is pontosDeControle(0);
+	 
+	 
+	 
+	 -- JUMP INSTRUCTIONS 
+	 
+	 alias address	  : std_logic_vector(JMP_ADDR_WIDTH-1 downto 0) is instrucao_s(25 downto 0);
 
     -- Parsing da instrucao
     alias RS_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s(25 downto 21);
@@ -85,7 +93,7 @@ architecture estrutural of fluxo_dados is
 	 
 	 -- Mux intermediario nao
 	 signal ZeroImediateMux, B : std_logic_vector(DATA_WIDTH-1 downto 0);
-	 signal sel_imed_zero_ext : std_logic;
+	 signal sel_imed_zero_ext : std_logic;  --remove and use upper alias
 	 signal sel_tipo_extensao : std_logic_vector(1 downto 0);
 	 
 	 signal dezeseisZeros : std_logic_vector(16-1 downto 0) := (others => '0');
@@ -168,6 +176,16 @@ begin
             entrada => PC_s,
             saida   => PC_mais_4
         ); 
+		  
+		Somador8: entity work.soma4
+        generic map (
+            larguraDados => DATA_WIDTH,
+				incremento => 8
+        )
+		port map (
+            entrada => PC_s,
+            saida   => PC_mais_8
+        );
 
     -- ROM
     ROM: entity work.ROM 
@@ -245,7 +263,7 @@ begin
             entradaA => saida_ula, 
             entradaB => dado_lido_mem, 
 				entradaC => PC_mais_4,
-				entradaD => (others => 'X'),
+				entradaD => PC_mais_8, --isso exiaste ?
             seletor  => sel_mux_ula_mem,
             saida    => saida_mux_ula_mem
         );
@@ -363,10 +381,10 @@ begin
             larguraDados => DATA_WIDTH        -- TODO
         )
 		port map (
-            entradaA => saida_mux_banco_ula,
+            entradaA => saida_mux_banco_ula,      
             entradaB => ZeroImediateMux,
             seletor  => sel_imed_zero_ext,
-            saida    => B
+            saida    => B      --  oque entra na ula dependendo as cosias 
         ); 
 		  
 		  
@@ -382,6 +400,10 @@ begin
             seletor  => sel_tipo_extensao,
             saida    => ZeroImediateMux
         ); 
+		  
+		  
+		  
+		  -- 
 		  
 		  
 		  

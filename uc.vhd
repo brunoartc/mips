@@ -37,13 +37,14 @@ begin
 	 --			mux PC(beq & jump) = 0
 	 -- 			mux (rt / rd )
 	 
-	 muxJump <= 	'1' when opcode = opCodeTipoJ else
+	 muxJump <= 	'1' when opcode = opCodeTipoJ or opcode = opCodeJAL else
 							'0';
 							
 	muxBeq <= 	'1' when opcode = opCodeBEQ else
 							'0';
 	
 	muxRtRd <= 	"01" when opcode = opCodeTipoR else --mudar era '1' e '0'
+					"10" when opcode = opCodeJAL else -- naop existia agora pra jal pra selecionar o 31
 					"00";
 					
 	
@@ -51,6 +52,7 @@ begin
 						'0';
 						
 	muxUlaMem <= "01" when opcode = opCodeLW else  -- mudar era '1' e '0'
+						"10" when opcode = opCodeJAL else
 						"00";
 						
 	habLeituraMem <= '1' when opcode = opCodeLW else
@@ -60,7 +62,7 @@ begin
 						'0';
 	
 	
-	habEscritaReg <= '1' when opcode = opCodeLW or opcode = opCodeTipoR  else
+	habEscritaReg <= '1' when opcode = opCodeLW or opcode = opCodeTipoR or opcode = opCodeJAL else --add jal e seleciona 31
 						'0';
 						
 						
@@ -76,15 +78,19 @@ begin
 				'0';		
 				
 				
-	sel_tipo_extensao <= "01" when opcode = opCodeAndI or opcode = opCodeOrI else
-								"10" when opcode = opCodeLUI else
-								"00";
+	sel_tipo_extensao <= zerosAEsquerda when opcode = opCodeAndI or opcode = opCodeOrI else
+								zerosADiretira when opcode = opCodeLUI else
+								extensorNormal;
+								
+								
+	
 				
 	
 				
 				
 	pontosDeControle <= ulaOp & habEscritaReg & habEscritaMem & habLeituraMem & muxUlaMem & muxRtRd & muxUlaBanc & muxBeq & muxJump;
 				
+	 
 	 
 	 -- sw
 	 -- add

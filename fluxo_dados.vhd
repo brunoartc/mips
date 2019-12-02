@@ -54,28 +54,28 @@ architecture estrutural of fluxo_dados is
     signal ULActr : std_logic_vector(CTRL_ALU_WIDTH-1 downto 0);
 	 
 	 -- Pipeline signals
-	 signal inMemEx : std_logic_vector(109-1 downto 0);
-	 signal inMemWb : std_logic_vector(78-1 downto 0);
-	 signal outMemMb : std_logic_vector(77-1 downto 0);
+	 signal inMemEx : std_logic_vector(110-1 downto 0); --era 109
+	 signal inMemWb : std_logic_vector(79-1 downto 0); --era 78
+	 signal outMemMb : std_logic_vector(78-1 downto 0); --era 77
 	 signal isJmpOrBeq : std_logic;
 	 
 
     -- Codigos da palavra de controle:
 	 --alias sel_tipo_extensao : std_logic_vector is pontosDeControle(15 downto 14); Para as instrucoes do tipo I
 	 --alias sel_imed_zero_ext : std_logic is pontosDeControle(13);
-    alias ULAop             : std_logic_vector(ALU_OP_WIDTH-1 downto 0) is pontosDeControle(12 downto 10); --era 10 downto 8
-    alias escreve_RC        : std_logic is pontosDeControle(9); --era 7
-    alias escreve_RAM       : std_logic is pontosDeControle(8); --era 6
-    alias leitura_RAM       : std_logic is pontosDeControle(7); --era 5
+    alias ULAop             : std_logic_vector(ALU_OP_WIDTH-1 downto 0) is pontosDeControle(13 downto 11); --era 10 downto 8
+    alias escreve_RC        : std_logic is pontosDeControle(10); --era 7
+    alias escreve_RAM       : std_logic is pontosDeControle(9); --era 6
+    alias leitura_RAM       : std_logic is pontosDeControle(8); --era 5
     
 	 
-	 alias sel_mux_ula_mem   : std_logic_vector is pontosDeControle(6 downto 5); --mudado era 4 e std_loc
-    alias sel_mux_rd_rt     : std_logic_vector is pontosDeControle(4 downto 3); --mudado era 3 e std_logic
+	 alias sel_mux_ula_mem   : std_logic_vector is pontosDeControle(7 downto 6); --  era 6 e 5  - mudado era 4 e std_loc
+    alias sel_mux_rd_rt     : std_logic_vector is pontosDeControle(5 downto 4); --   era 4 e 3 - mudado era 3 e std_logic
     
 	 
-	 alias sel_mux_banco_ula : std_logic is pontosDeControle(2);
-    alias sel_beq           : std_logic is pontosDeControle(1);
-    alias sel_mux_jump      : std_logic is pontosDeControle(0);
+	 alias sel_mux_banco_ula : std_logic is pontosDeControle(3); --2
+    alias sel_beq           : std_logic is pontosDeControle(2); --era 1
+    alias sel_mux_jump      : std_logic_vector is pontosDeControle(1 downto 0); --era 0
 	 
 	 
 	 
@@ -319,30 +319,30 @@ begin
             saida    => saida_mux_beq
         );
 		
-     mux_jump: entity work.muxGenerico2 
-        generic map (
-            larguraDados => DATA_WIDTH
-        )
-		port map (
-            entradaA => saida_mux_beq,
-            entradaB => PC_4_concat_imed, --TODO: mudar para um mux de 4 portas e aumentar os pontos de controle
-            seletor  => sel_mux_jump,
-            saida    => saida_mux_jump
-        );
-		  
-		 -- =================================================== TODO MUDAR P`ARA 
---		mux_jump: entity work.muxGenerico4
+--     mux_jump: entity work.muxGenerico2 
 --        generic map (
 --            larguraDados => DATA_WIDTH
 --        )
 --		port map (
 --            entradaA => saida_mux_beq,
---            entradaB => PC_4_concat_imed, 
---            entradaC => RA, 
---				entradaD => (others => 'X'), 
---				seletor  => sel_mux_jump, --TODO: aumentar pontos de controle (WIP TODO: need funct in uc)
+--            entradaB => PC_4_concat_imed, --TODO: mudar para um mux de 4 portas e aumentar os pontos de controle
+--            seletor  => sel_mux_jump,
 --            saida    => saida_mux_jump
 --        );
+		  
+		 -- =================================================== TODO MUDAR P`ARA 
+		mux_jump: entity work.muxGenerico4
+        generic map (
+            larguraDados => DATA_WIDTH
+        )
+		port map (
+            entradaA => saida_mux_beq,
+            entradaB => PC_4_concat_imed, 
+            entradaC => RA, 
+				entradaD => (others => 'X'), 
+				seletor  => sel_mux_jump, --TODO: aumentar pontos de controle (WIP TODO: need funct in uc)
+            saida    => saida_mux_jump
+        );
 --		  
 		  
 		  --- =================== PIPELINE ======================
@@ -351,7 +351,7 @@ begin
 		ID_EX: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 2 registradores
-			larguraDados => 109
+			larguraDados => 110 --era 109 
 			)
 			port map(data => pontosDeControle  & instrucao_s & RA & RB,
 				 q => inMemEx, -- in da ula tmb
@@ -363,9 +363,9 @@ begin
 		  EX_MEM: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 33 saida ula
-			larguraDados => 78
+			larguraDados => 79 -- era 78
 			)
-			port map(data => inMemEx(108 downto 64) & saida_ula & Z_out, --possible wrong
+			port map(data => inMemEx(109 downto 64) & saida_ula & Z_out, --possible wrong
 				 q => inMemWb, -- in da memoria tmb
 				 enable => '1',
 				 CLK => clk,
@@ -375,9 +375,9 @@ begin
 		  MEM_MB: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 32 saida mem
-			larguraDados => 77
+			larguraDados => 78 --era 77
 			)
-			port map(data => inMemWb(77 downto 33) & dado_lido_mem,
+			port map(data => inMemWb(78 downto 33) & dado_lido_mem,
 				 q => outMemMb, --in do banco de registradores
 				 enable => '1',
 				 CLK => clk,

@@ -10,6 +10,7 @@ entity uc is
 	port
     (
         opcode              	: IN STD_LOGIC_VECTOR(OPCODE_WIDTH-1 DOWNTO 0);
+		  funct              	: IN STD_LOGIC_VECTOR(FUNCT_WIDTH-1 DOWNTO 0);
         pontosDeControle    	: OUT STD_LOGIC_VECTOR(CONTROLWORD_WIDTH-1 DOWNTO 0)
     );
 end entity;
@@ -17,8 +18,8 @@ end entity;
 architecture bhv of uc is
 
 
-SIGNAL muxJump, muxBeq, habEscritaReg, muxRtimediato,  beq, habLeituraMem,habEscritaMem,  muxUlaBanc, sel_imed_zero_ext : STD_LOGIC;
-SIGNAL muxRtRd, muxUlaMem, sel_tipo_extensao : STD_LOGIC_VECTOR(1 downto 0); --era std logic vector
+SIGNAL muxBeq, habEscritaReg, muxRtimediato,  beq, habLeituraMem,habEscritaMem,  muxUlaBanc, sel_imed_zero_ext : STD_LOGIC;
+SIGNAL muxJump, muxRtRd, muxUlaMem, sel_tipo_extensao : STD_LOGIC_VECTOR(1 downto 0); --mux jump adicionado, era std logic vector
 SIGNAL ulaOp : STD_LOGIC_VECTOR(2 DOWNTO 0);
 begin
     --process(opcode)
@@ -37,12 +38,12 @@ begin
 	 --			mux PC(beq & jump) = 0
 	 -- 			mux (rt / rd )
 	 
-	 muxJump <= 	'1' when opcode = opCodeTipoJ or opcode = opCodeJAL else
-							'0'; 
+--	 muxJump <= 	'1' when opcode = opCodeTipoJ or opcode = opCodeJAL else
+--							'0'; 
 							
---	muxJump <= 	"01" when opcode = opCodeTipoJ or opcode = opCodeJAL else
---					"10" when opcode = functJR else   ---precisa ser funct TODO: ARRUMAR UM MEIO
---							"00"; 
+	muxJump <= 	"01" when opcode = opCodeTipoJ or opcode = opCodeJAL else
+					"10" when funct = functJR else   ---precisa ser funct TODO: ARRUMAR UM MEIO
+							"00"; 
 							
 	muxBeq <= 	'1' when opcode = opCodeBEQ else
 							'0';

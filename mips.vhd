@@ -25,6 +25,7 @@ architecture estrutural of mips is
     -- signal clk  : STD_LOGIC;
 
     alias opcode : std_logic_vector(OPCODE_WIDTH-1 downto 0) is instrucao(31 DOWNTO 26);
+	 alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao(5 DOWNTO 0);
 begin
 
     -- CLOCK generator auxiliar para simulação
@@ -42,6 +43,7 @@ begin
 	port map
 	(
         opcode              	=> opcode,
+		  funct						=> funct,
         pontosDeControle    	=> pontosDeControle
     );
 	 

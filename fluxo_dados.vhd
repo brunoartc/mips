@@ -54,6 +54,11 @@ architecture estrutural of fluxo_dados is
     signal ULActr : std_logic_vector(CTRL_ALU_WIDTH-1 downto 0);
 	 
 	 -- Pipeline signals
+	 signal out_if_id : std_logic_vector(64-1 downto 0); 
+	 signal out_id_ex : std_logic_vector(150-1 downto 0); 
+	 signal out_ex_mem : std_logic_vector(140-1 downto 0); 
+	 signal out_mem_wb : std_logic_vector(103-1 downto 0); 
+	 
 	 signal inMemEx : std_logic_vector(110-1 downto 0); --era 109
 	 signal inMemWb : std_logic_vector(79-1 downto 0); --era 78
 	 signal outMemMb : std_logic_vector(78-1 downto 0); --era 77
@@ -77,8 +82,9 @@ architecture estrutural of fluxo_dados is
     alias sel_beq           : std_logic is pontosDeControle(2); --era 1
     alias sel_mux_jump      : std_logic_vector is pontosDeControle(1 downto 0); --era 0
 	 
-	 
-	 
+	
+--alias wb_address   : std_loogic_vector(4 downto 0) is out_if_id();
+	
 	 -- JUMP INSTRUCTIONS 
 	 
 	 alias address	  : std_logic_vector(JMP_ADDR_WIDTH-1 downto 0) is instrucao_s(25 downto 0);
@@ -101,6 +107,7 @@ architecture estrutural of fluxo_dados is
 begin
 
     instrucao <= instrucao_s;
+	 --instrucao_s =  out_if_id(31 downto 0)
 
     sel_mux_beq <= sel_beq AND Z_out;
 
@@ -114,12 +121,12 @@ begin
             larguraEndBancoRegs => 5
         )
         port map (
-            enderecoA => RS_addr,
-            enderecoB => RT_addr,
-            enderecoC => saida_mux_rd_rt,
+            enderecoA => out_if_id(25 downto 21),
+            enderecoB => out_if_id(20 downto 16),
+            enderecoC => out_mem_wb(71 downto 67),
             clk          => clk,
             dadoEscritaC => saida_mux_ula_mem, 
-            escreveC     => escreve_RC,
+            escreveC     => out_mem_wb(0),
             saidaA       => RA,
             saidaB       => RB
         );
@@ -130,7 +137,7 @@ begin
             NUM_BITS => DATA_WIDTH
         )
 		port map (
-            A   => RA,
+            A   => out_id_ex(114 downto 83),
             B   => saida_mux_banco_ula, -- anterior saida mux banco ula
             ctr => ULActr,
             C   => saida_ula,
@@ -141,7 +148,7 @@ begin
         port map
         (
             funct  => funct,
-            ALUop  => ULAop,
+            ALUop  => out_id_ex(85 downto 83),
             ALUctr => ULActr
         );
      
@@ -164,7 +171,7 @@ begin
         )
 		port map (
             entradaA => entrada_somador_beq,
-            entradaB => PC_mais_4,
+            entradaB => out_id_ex(149 downto 118),
             saida    => PC_mais_4_mais_imediato
         );
     
@@ -205,11 +212,11 @@ begin
             addrWidth => ADDR_WIDTH
         )
 		port map (
-            endereco    => saida_ula, 
-            we          => escreve_RAM,
-            re          => leitura_RAM,
+            endereco    => out_ex_mem(102 downto 71), 
+            we          => out_ex_mem(4),
+            re          => out_ex_mem(3),
             clk         => clk,
-            dado_write  => RB,
+            dado_write  => out_ex_mem(70 downto 39),
             dado_read   => dado_lido_mem
         ); 
 
@@ -220,7 +227,7 @@ begin
             larguraDadoSaida   => DATA_WIDTH
         )
 		port map (
-            estendeSinal_IN  => imediato,
+            estendeSinal_IN  => out_if_id(15 downto 0),
             estendeSinal_OUT => sinal_ext 
         ); 
 
@@ -229,7 +236,7 @@ begin
             larguraDado => DATA_WIDTH
         )
 		port map (
-            shift_IN  => sinal_ext,
+            shift_IN  => out_id_ex(50 downto 19) ,
             shift_OUT => entrada_somador_beq
         );
     
@@ -260,11 +267,11 @@ begin
             larguraDados => DATA_WIDTH
         )
 		port map (
-            entradaA => saida_ula, 
-            entradaB => dado_lido_mem, 
+            entradaA => out_mem_wb(102 downto 71), 
+            entradaB => out_mem_wb(33 downto 2), 
 				entradaC => PC_mais_4,
 				entradaD => PC_mais_8, --isso exiaste ?
-            seletor  => sel_mux_ula_mem,
+            seletor  => out_mem_wb(1 downto 0),
             saida    => saida_mux_ula_mem
         );
 		  
@@ -286,11 +293,11 @@ begin
             larguraDados => REGBANK_ADDR_WIDTH
         )
 		port map (
-            entradaA => RT_addr, 
-            entradaB => RD_addr,
+            entradaA => out_id_ex(18 downto 14), 
+            entradaB => out_id_ex(13 downto 9),
 				entradaC => "11111",
 				entradaD => (others => 'X'),
-            seletor  => sel_mux_rd_rt,
+            seletor  => out_id_ex(7 downto 6),
             saida    => saida_mux_rd_rt
         );
 		  
@@ -302,9 +309,9 @@ begin
             larguraDados => DATA_WIDTH
         )
 		port map (
-            entradaA => RB, 
-            entradaB => sinal_ext,  
-            seletor  => sel_mux_banco_ula,
+            entradaA => out_id_ex(82 downto 51), 
+            entradaB => out_id_ex(50 downto 19),  
+            seletor  => out_id_ex(9),
             saida    => saida_mux_banco_ula
         );
 		
@@ -314,7 +321,7 @@ begin
         )
 		port map (
             entradaA => PC_mais_4,
-            entradaB => PC_mais_4_mais_imediato,
+            entradaB => out_ex_mem(37 downto 6),
             seletor  => sel_mux_beq,
             saida    => saida_mux_beq
         );
@@ -347,41 +354,89 @@ begin
 		  
 		  --- =================== PIPELINE ======================
 		  
-		  -- TROCAR AS LIGACOES
+		IF_ID: entity work.registradorGenerico
+			generic map (
+			larguraDados => 64
+			)
+			port map(
+				 data => 
+					PC_mais_4 &  	-- (63 - 32) 
+					instrucao_s,	-- (31 - 0)
+					
+				 q => out_if_id,
+				 enable => '1',
+				 CLK => clk,
+				 RST => '0'
+        );
+		  
 		ID_EX: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 2 registradores
-			larguraDados => 110 --era 109 
+			larguraDados => 150 -- 110 era - 109
 			)
-			port map(data => pontosDeControle  & instrucao_s & RA & RB,
-				 q => inMemEx, -- in da ula tmb
+			port map(
+				data => 
+					out_if_id(63 downto 32) & 	-- (149 - 118)
+					RA & 							   -- (117 - 86)
+					ULAop &							-- (85 - 83)
+					RB & 								-- (82 - 51)
+					sinal_ext &						-- (50 - 19)
+					out_if_id(20 downto 16) &  -- (18 - 14)
+					out_if_id(15 downto 11) &	-- (13 - 9)
+					sel_mux_banco_ula &			-- (8)
+					sel_mux_rd_rt &				-- (7 - 6)
+					escreve_RAM &					-- (5)
+					leitura_RAM &					-- (4)
+					sel_beq &						-- (3)
+					sel_mux_ula_mem &				-- (2 - 1)
+					escreve_RC,						-- (0)
+					
+				
+				 q => out_id_ex, 
 				 enable => '1',
 				 CLK => clk,
-				 RST => isJmpOrBeq
+				 RST => '0'
         );
 		  
 		  EX_MEM: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 33 saida ula
-			larguraDados => 79 -- era 78
+			larguraDados => 140 -- era 78
 			)
-			port map(data => inMemEx(109 downto 64) & saida_ula & Z_out, --possible wrong
-				 q => inMemWb, -- in da memoria tmb
+			port map(
+				data => 
+					out_id_ex(149 downto 118) & 	-- (139 - 108)
+					saida_mux_rd_rt &					-- (107 - 103)
+					saida_ula &							-- (102 - 71)
+					out_id_ex(82 downto 51) & -- RB  (70 - 39)
+					Z_out &								--	(38)
+					PC_mais_4_mais_imediato &		-- (37 - 6)	
+					out_id_ex(5 downto 0),			-- (5 - 0)
+					
+				 q => out_ex_mem,
 				 enable => '1',
 				 CLK => clk,
-				 RST => isJmpOrBeq
+				 RST => '0'
         );
 		  
 		  MEM_MB: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 32 saida mem
-			larguraDados => 78 --era 77
+			larguraDados => 103 --era 77
 			)
-			port map(data => inMemWb(78 downto 33) & dado_lido_mem,
-				 q => outMemMb, --in do banco de registradores
+			port map(
+				data => 
+					out_ex_mem(102 downto 71) & 	-- (102 - 71)
+					out_ex_mem(107 downto 103) & 	-- (70 - 66) saida_mux_rd_rt
+					out_ex_mem(102 downto 71) & 	-- (65 - 34) saida_ula
+					dado_lido_mem &					-- (33 - 2)
+					out_ex_mem(2 downto 1),			-- (1 - 0) sel_mux
+					
+					
+				 q => out_mem_wb, --in do banco de registradores
 				 enable => '1',
 				 CLK => clk,
-				 RST => isJmpOrBeq
+				 RST => '0'
         );
 		  
 		  

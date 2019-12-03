@@ -30,6 +30,7 @@ architecture assincrona OF ROM IS
 
             -- Inicializa os endereços:
         tmp(0) := x"AC09_0008"; --sw $t1 8($zero) (m(8) := 0x0A)  100011 00000 01001 x0008
+		  --tmp(0) := x"0000_0000"; --sw $t1 8($zero) (m(8) := 0x0A)  100011 00000 01001 x0008
         tmp(1) := x"8C08_0008"; --lw $t0 8($zero) ($t0 := 0x0A)   100011 00000 01000 x0008
         tmp(2) := x"012A_4022"; --sub $t0 $t1 $t2 ($t0 := 0xFF)   000000 01001 01010 01000 00000 100010
         tmp(3) := x"012A_4024"; --and $t0 $t1 $t2 ($t0 := 0x0A)   000000 01001 01010 01000 00000 100100
@@ -41,10 +42,10 @@ architecture assincrona OF ROM IS
         return tmp;
     end initMemory;
 
-  signal memROM: blocoMemoria := initMemory;
-  -- attribute ram_init_file : string;
-  -- attribute ram_init_file of memROM:
-  -- signal is "ROMcontent.mif";
+  signal memROM: blocoMemoria;
+  attribute ram_init_file : string;
+  attribute ram_init_file of memROM:
+  signal is "123.mif";
 
 -- Utiliza uma quantidade menor de endereços locais:
    signal EnderecoLocal : std_logic_vector(memoryAddrWidth-1 downto 0);

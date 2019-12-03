@@ -9,7 +9,10 @@ use work.constantesMIPS.all;
 entity mips is
 	port
     (
-        clk			            : IN  STD_LOGIC
+        clk			            : IN  STD_LOGIC;
+		  oo            : OUT STD_LOGIC_VECTOR(DATA_WIDTH-1 DOWNTO 0);
+		  saida_ula : out std_logic_vector(32-1 downto 0)
+
     );
 end entity;
 
@@ -27,16 +30,18 @@ architecture estrutural of mips is
     alias opcode : std_logic_vector(OPCODE_WIDTH-1 downto 0) is instrucao(31 DOWNTO 26);
 	 alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao(5 DOWNTO 0);
 begin
+oo <= instrucao;
 
     -- CLOCK generator auxiliar para simulação
     -- CG : entity work.clock_generator port map (clk	=> clk);
-
+	--saida_ula <= saida_ula_out;
     FD : entity work.fluxo_dados 
 	port map
 	(
         clk	                    => clk,
         pontosDeControle        => pontosDeControle,
-        instrucao               => instrucao
+        instrucao               => instrucao,
+		  saida_ula_out 				  => saida_ula
     );
 
     UC : entity work.uc 

@@ -42,8 +42,8 @@ begin
 --							'0'; 
 							
 	muxJump <= 	"01" when opcode = opCodeTipoJ or opcode = opCodeJAL else
-					"10" when funct = functJR else   ---precisa ser funct TODO: ARRUMAR UM MEIO
-							"00"; 
+					-- "10" when funct = functJR else   ---precisa ser funct TODO: ARRUMAR UM MEIO !!!!!!!!!!!tirei
+					"00"; 
 							
 	muxBeq <= 	'1' when opcode = opCodeBEQ else
 							'0';

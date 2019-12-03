@@ -11,7 +11,9 @@ entity mips is
     (
         clk			            : IN  STD_LOGIC;
 		  oo            : OUT STD_LOGIC_VECTOR(DATA_WIDTH-1 DOWNTO 0);
-		  saida_ula : out std_logic_vector(32-1 downto 0)
+		  saida_ula : out std_logic_vector(32-1 downto 0);
+		  pontosDeControleOut     : OUT STD_LOGIC_VECTOR(CONTROLWORD_WIDTH-1 DOWNTO 0);
+		  pcOut     : OUT STD_LOGIC_VECTOR(DATA_WIDTH-1 DOWNTO 0)
 
     );
 end entity;
@@ -29,19 +31,38 @@ architecture estrutural of mips is
 
     alias opcode : std_logic_vector(OPCODE_WIDTH-1 downto 0) is instrucao(31 DOWNTO 26);
 	 alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao(5 DOWNTO 0);
+	 
+	 
+	 
+	 
+	 signal signal_clk : std_logic;
 begin
+	
 oo <= instrucao;
-
+pontosDeControleOut <= pontosDeControle;
     -- CLOCK generator auxiliar para simulação
     -- CG : entity work.clock_generator port map (clk	=> clk);
 	--saida_ula <= saida_ula_out;
+	
+	
+	
+	
+	ED_EDD_EDDY: entity work.edgeDetector
+     port map ( clk   =>  clk,
+              entrada =>  clk,
+              saida  => signal_clk);
+	
+	
+	
+	
     FD : entity work.fluxo_dados 
 	port map
 	(
-        clk	                    => clk,
+        clk	                    => signal_clk,
         pontosDeControle        => pontosDeControle,
         instrucao               => instrucao,
-		  saida_ula_out 				  => saida_ula
+		  saida_ula_out 				  => saida_ula,
+		  saida_mux_jump_out			=> pcOut
     );
 
     UC : entity work.uc 

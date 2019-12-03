@@ -15,12 +15,12 @@ entity fluxo_dados is
         clk			            : IN STD_LOGIC;
         pontosDeControle        : IN STD_LOGIC_VECTOR(CONTROLWORD_WIDTH-1 DOWNTO 0); --mudar nos genericos
         instrucao               : OUT STD_LOGIC_VECTOR(DATA_WIDTH-1 DOWNTO 0);
-		  saida_ula_out 				: OUT std_logic_vector(32-1 downto 0)
+		  saida_ula_out 				: OUT std_logic_vector(32-1 downto 0);
+		  saida_mux_jump_out 		: OUT std_logic_vector(DATA_WIDTH-1 downto 0)
     );
 end entity;
 
 architecture estrutural of fluxo_dados is
-
     -- Declaração de sinais auxiliares
     
     -- Sinais auxiliar da instrução
@@ -106,6 +106,7 @@ architecture estrutural of fluxo_dados is
 	 signal dezeseisZeros : std_logic_vector(16-1 downto 0) := (others => '0');
 
 begin
+		saida_mux_jump_out <= saida_mux_jump;
 
 	saida_ula_out <= saida_ula;
 

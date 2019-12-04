@@ -133,7 +133,7 @@ pontosDeControleOut <= pontosDeControle;
 	
 	ED_EDD_EDDY: entity work.edgeDetector
      port map ( clk   =>  clk, --NAO TA FUNCIONANDO
-              entrada =>  key,
+              entrada =>  not(key),
               saida  => key_clk);
 	
 	

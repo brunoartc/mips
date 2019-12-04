@@ -106,7 +106,7 @@ architecture estrutural of fluxo_dados is
 	 signal dezeseisZeros : std_logic_vector(16-1 downto 0) := (others => '0');
 
 begin
-		saida_mux_jump_out <= saida_mux_jump;
+		saida_mux_jump_out <= PC_s;
 
 	saida_ula_out <= saida_ula;
 

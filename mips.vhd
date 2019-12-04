@@ -116,7 +116,7 @@ pontosDeControleOut <= pontosDeControle;
         dadoHex =>    pcOut(11 downto 8),
         saida7seg => HEX6 -- := (others => '1')
     );
-	 
+	 --key_clk
 	 MENOS_PCCC: entity work.conversorHex7Seg
     port map
     (
@@ -132,8 +132,8 @@ pontosDeControleOut <= pontosDeControle;
 	 
 	
 	ED_EDD_EDDY: entity work.edgeDetector
-     port map ( clk   =>  clk, --NAO TA FUNCIONANDO
-              entrada =>  not(key),
+     port map ( clk   =>  clk,
+              entrada =>  (not key),
               saida  => key_clk);
 	
 	
@@ -142,7 +142,7 @@ pontosDeControleOut <= pontosDeControle;
     FD : entity work.fluxo_dados 
 	port map
 	(
-        clk	                    => key_clk, --key_clk
+        clk	                    => clk, --key_clk
         pontosDeControle        => pontosDeControle,
         instrucao               => instrucao,
 		  saida_ula_out 				  => saida_ula,

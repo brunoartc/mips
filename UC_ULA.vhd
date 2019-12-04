@@ -19,25 +19,26 @@ architecture bhv of UC_ULA is
     signal ALUop_s : STD_LOGIC_VECTOR(ALU_OP_WIDTH-1 DOWNTO 0);
 begin	
 	ALUctr <= 	------------- ADD --------------
-					ulaCtrlAdd when funct = functADD					
-								and ALUop = aluOpAdd else
+					ulaCtrlAdd when (funct = functADD					
+								and ALUop = readFunctULA) 
+								or (ALUop = aluOpAdd)	else
 								
 					----------- SUB/BEQ/BNE ---------			
 					ulaCtrlSub when (funct = functSUB					
-								and ALUop = aluOpSub)
-									or (ALUop = readFunctULA) else --beq & bne
+								and ALUop = readFunctULA)
+									or (ALUop = aluOpSub) else --beq & bne
 									
 					------------- AND --------------
 					ulaCtrlAnd when funct = functAND 					
-								and ALUop = aluOpAnd else
+								and ALUop = readFunctULA else
 								
 					-------------- OR --------------
 					ulaCtrlOr when funct = functOR
-								and ALUop = aluOpOr else
+								and ALUop = readFunctULA else
 								
 					------------- SLT --------------
 					ulaCtrlSlt when funct = functSLT
-								and ALUop = aluOpSlt 
+								and ALUop = readFunctULA 
 					
 					------------ ELSE --------------
 					else (others => '0');

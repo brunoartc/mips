@@ -54,14 +54,14 @@ begin
 	
 	
 
-    process(ctr, soma, sub, and1, or1, slt)
+    process(all)
     begin
 	 case ctr is
 	    when "0010" => C_s <= soma;
 	    when "0110" => C_s <= sub;
-       	when "0000" => C_s <= and1;
+       when "0000" => C_s <= and1;
 	    when "0001" => C_s <= or1;
-		when "0111" => C_s <= slt;
+		 when "0111" => C_s <= slt;
 	    when others => C_s <= zero;
     end case;
 	end process;

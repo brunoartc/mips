@@ -34,12 +34,7 @@ begin
 	 
 	 -- control points [ mux PC(beq & jump) , mux (rt / rd ), hab Escrita reg , mux rt/ imediato, ula op , mux ula mem, beq, hab leitura mem, hab escrita mem ]
 	 
-	 -- lw  	   R[rt] M[
-	 --			mux PC(beq & jump) = 0
-	 -- 			mux (rt / rd )
-	 
---	 muxJump <= 	'1' when opcode = opCodeTipoJ or opcode = opCodeJAL else
---							'0'; 
+
 							
 	muxJump <= 	"01" when opcode = opCodeTipoJ or opcode = opCodeJAL else
 					-- "10" when funct = functJR else   ---precisa ser funct TODO: ARRUMAR UM MEIO !!!!!!!!!!!tirei

@@ -15,9 +15,16 @@ entity fluxo_dados is
         clk			            : IN STD_LOGIC;
         pontosDeControle        : IN STD_LOGIC_VECTOR(CONTROLWORD_WIDTH-1 DOWNTO 0); --mudar nos genericos
         instrucao               : OUT STD_LOGIC_VECTOR(DATA_WIDTH-1 DOWNTO 0);
+		  instrucao_saida          : OUT STD_LOGIC_VECTOR(DATA_WIDTH-1 DOWNTO 0);
 		  saida_ula_out 				: OUT std_logic_vector(32-1 downto 0);
-		  saida_mux_jump_out 		: OUT std_logic_vector(DATA_WIDTH-1 downto 0)
-    );
+		  saida_mux_jump_out 		: OUT std_logic_vector(DATA_WIDTH-1 downto 0);
+		  ULActr_out 					: OUT std_logic_vector(CTRL_ALU_WIDTH-1 downto 0);
+		  A_ULA							: OUT std_logic_vector(DATA_WIDTH-1 downto 0);
+		  B_ULA							: OUT std_logic_vector(DATA_WIDTH-1 downto 0);
+		  end_a_out                : OUT std_logic_vector(4 downto 0);
+		  end_b_out                : OUT std_logic_vector(4 downto 0)
+		
+	 );
 end entity;
 
 architecture estrutural of fluxo_dados is
@@ -25,6 +32,7 @@ architecture estrutural of fluxo_dados is
     
     -- Sinais auxiliar da instrução
     signal instrucao_s : std_logic_vector(DATA_WIDTH-1 downto 0);
+	 signal instrucao_s_saida : std_logic_vector(DATA_WIDTH-1 downto 0);
 
     -- Sinais auxiliares para o banco de registradores
     signal RA, RB : std_logic_vector(DATA_WIDTH-1 downto 0);
@@ -94,7 +102,7 @@ architecture estrutural of fluxo_dados is
     alias RS_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s(25 downto 21);
     alias RT_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s(20 downto 16);
     alias RD_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s(15 downto 11);
-    alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao_s(5 DOWNTO 0);
+    alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao_s_saida(5 DOWNTO 0); --TODO possivelmente errado
     alias imediato  : std_logic_vector(15 downto 0) is instrucao_s(15 downto 0);
 	 
 	 
@@ -104,14 +112,27 @@ architecture estrutural of fluxo_dados is
 	 signal sel_tipo_extensao : std_logic_vector(1 downto 0);
 	 
 	 signal dezeseisZeros : std_logic_vector(16-1 downto 0) := (others => '0');
+	 
+
 
 begin
+instrucao_s_saida <= out_if_id(31 downto 0);
+instrucao_saida <= out_if_id(31 downto 0);
+
+end_a_out <= out_if_id(25 downto 21);
+end_b_out <= out_if_id(20 downto 16);
 		saida_mux_jump_out <= PC_s;
 
 	saida_ula_out <= saida_ula;
 
     instrucao <= instrucao_s;
 	 --instrucao_s =  out_if_id(31 downto 0)
+	 
+	 ULActr_out <= ULActr;
+	 
+	 A_ULA <= out_id_ex(117 downto 86);
+	 
+	 B_ULA <= saida_mux_banco_ula;
 
     sel_mux_beq <= sel_beq AND Z_out;
 
@@ -125,7 +146,7 @@ begin
             larguraEndBancoRegs => 5
         )
         port map (
-            enderecoA => out_if_id(25 downto 21),
+            enderecoA => out_if_id(25 downto 21), --isso ta errado
             enderecoB => out_if_id(20 downto 16),
             enderecoC => out_mem_wb(71 downto 67),
             clk          => clk,
@@ -141,8 +162,8 @@ begin
             NUM_BITS => DATA_WIDTH
         )
 		port map (
-            A   => out_id_ex(114 downto 83),
-            B   => saida_mux_banco_ula, -- anterior saida mux banco ula
+            A   => X"00000001",--out_id_ex(117 downto 86),--, ---estranho
+            B   => x"00000001",--saida_mux_banco_ula,--saida_mux_banco_ula, -- anterior saida mux banco ula
             ctr => ULActr,
             C   => saida_ula,
             Z   => Z_out
@@ -315,7 +336,7 @@ begin
 		port map (
             entradaA => out_id_ex(82 downto 51), 
             entradaB => out_id_ex(50 downto 19),  
-            seletor  => out_id_ex(9),
+            seletor  => out_id_ex(8), --errado      
             saida    => saida_mux_banco_ula
         );
 		

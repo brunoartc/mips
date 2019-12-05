@@ -40,7 +40,7 @@ architecture estrutural of mips is
     -- Sinal de clock auxiliar para simulação
     -- signal clk  : STD_LOGIC;
 
-    alias opcode : std_logic_vector(OPCODE_WIDTH-1 downto 0) is instrucao_saida(31 DOWNTO 26);   -- mudei para instrucao_saida
+    alias opcode : std_logic_vector(OPCODE_WIDTH-1 downto 0) is instrucao_saida(31 DOWNTO 26);   -- mudei para instrucao_saida (mais certo)
 	 alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao_saida(5 DOWNTO 0);   -- esse tambem
 	 
 	 signal saida_ula : std_logic_vector(32-1 downto 0);

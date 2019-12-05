@@ -6,7 +6,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use work.constantesMIPS.all;
 
-entity fluxo_dados is
+	entity fluxo_dados is
     generic (
         larguraROM          : natural := 8 -- deve ser menor ou igual a 32
     );
@@ -99,11 +99,12 @@ architecture estrutural of fluxo_dados is
 	 alias address	  : std_logic_vector(JMP_ADDR_WIDTH-1 downto 0) is instrucao_s(25 downto 0);
 
     -- Parsing da instrucao
-    alias RS_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s(25 downto 21);
-    alias RT_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s(20 downto 16);
-    alias RD_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s(15 downto 11);
-    alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao_s_saida(5 DOWNTO 0); --TODO possivelmente errado
+    alias RS_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s_saida(25 downto 21);
+    alias RT_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s_saida(20 downto 16);
+    alias RD_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s_saida(15 downto 11);
+    alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao_s_saida(5 DOWNTO 0); --TODO possivelmente errado MAN NAO SEI MAIS
     alias imediato  : std_logic_vector(15 downto 0) is instrucao_s(15 downto 0);
+	 alias funct_ula : std_logic_vector(FUNCT_WIDTH-1 downto 0) is out_id_ex(24 downto 19);
 	 
 	 
 	 -- Mux intermediario nao
@@ -122,6 +123,10 @@ instrucao_saida <= out_if_id(31 downto 0);
 end_a_out <= out_if_id(25 downto 21);
 end_b_out <= out_if_id(20 downto 16);
 		saida_mux_jump_out <= PC_s;
+		
+		
+		
+		--funct_ula <= out_id_ex(24 downto 19);
 
 	saida_ula_out <= saida_ula;
 
@@ -162,7 +167,7 @@ end_b_out <= out_if_id(20 downto 16);
             NUM_BITS => DATA_WIDTH
         )
 		port map (
-            A   => X"00000001",--out_id_ex(117 downto 86),--, ---estranho
+            A   => X"00000001",--out_id_ex(117 downto 86),--, ---estranho ula travada
             B   => x"00000001",--saida_mux_banco_ula,--saida_mux_banco_ula, -- anterior saida mux banco ula
             ctr => ULActr,
             C   => saida_ula,
@@ -172,7 +177,7 @@ end_b_out <= out_if_id(20 downto 16);
     UCULA : entity work.uc_ula 
         port map
         (
-            funct  => funct,
+            funct  => funct_ula,    --achei eh aqui que ta errado era funct antes
             ALUop  => out_id_ex(85 downto 83),
             ALUctr => ULActr
         );

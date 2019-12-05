@@ -66,7 +66,7 @@ architecture estrutural of fluxo_dados is
 	 signal out_if_id : std_logic_vector(64-1 downto 0); 
 	 signal out_id_ex : std_logic_vector(150-1 downto 0); 
 	 signal out_ex_mem : std_logic_vector(140-1 downto 0); 
-	 signal out_mem_wb : std_logic_vector(103-1 downto 0); 
+	 signal out_mem_wb : std_logic_vector(104-1 downto 0); 
 	 
 	 signal inMemEx : std_logic_vector(110-1 downto 0); --era 109
 	 signal inMemWb : std_logic_vector(79-1 downto 0); --era 78
@@ -151,7 +151,7 @@ end_b_out <= out_if_id(20 downto 16);
             larguraEndBancoRegs => 5
         )
         port map (
-            enderecoA => out_if_id(25 downto 21), --isso ta errado
+            enderecoA => out_if_id(25 downto 21), --isso ta errado (acho que nao)
             enderecoB => out_if_id(20 downto 16),
             enderecoC => out_mem_wb(71 downto 67),
             clk          => clk,
@@ -167,8 +167,8 @@ end_b_out <= out_if_id(20 downto 16);
             NUM_BITS => DATA_WIDTH
         )
 		port map (
-            A   => X"00000001",--out_id_ex(117 downto 86),--, ---estranho ula travada
-            B   => x"00000001",--saida_mux_banco_ula,--saida_mux_banco_ula, -- anterior saida mux banco ula
+            A   => out_id_ex(117 downto 86),--out_id_ex(117 downto 86),--, ---estranho ula travada
+            B   => saida_mux_banco_ula,--saida_mux_banco_ula,--saida_mux_banco_ula, -- anterior saida mux banco ula
             ctr => ULActr,
             C   => saida_ula,
             Z   => Z_out
@@ -297,11 +297,11 @@ end_b_out <= out_if_id(20 downto 16);
             larguraDados => DATA_WIDTH
         )
 		port map (
-            entradaA => out_mem_wb(102 downto 71), 
-            entradaB => out_mem_wb(33 downto 2), 
+            entradaA => out_mem_wb(65 downto 34), --ta certo agr - saida da ula
+            entradaB => out_mem_wb(33 downto 2),  --  dado lido na memoria
 				entradaC => PC_mais_4,
 				entradaD => PC_mais_8, --isso exiaste ?
-            seletor  => out_mem_wb(1 downto 0),
+            seletor  => out_mem_wb(2 downto 1), --tava 1 downto 0
             saida    => saida_mux_ula_mem
         );
 		  
@@ -341,7 +341,7 @@ end_b_out <= out_if_id(20 downto 16);
 		port map (
             entradaA => out_id_ex(82 downto 51), 
             entradaB => out_id_ex(50 downto 19),  
-            seletor  => out_id_ex(8), --errado      
+            seletor  => out_id_ex(8), --errado ? nao sei      
             saida    => saida_mux_banco_ula
         );
 		
@@ -452,7 +452,7 @@ end_b_out <= out_if_id(20 downto 16);
 		  MEM_MB: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 32 saida mem
-			larguraDados => 103 --era 77
+			larguraDados => 104 -- era 103     ---    era 77
 			)
 			port map(
 				data => 
@@ -460,7 +460,7 @@ end_b_out <= out_if_id(20 downto 16);
 					out_ex_mem(107 downto 103) & 	-- (70 - 66) saida_mux_rd_rt
 					out_ex_mem(102 downto 71) & 	-- (65 - 34) saida_ula
 					dado_lido_mem &					-- (33 - 2)
-					out_ex_mem(2 downto 1),			-- (1 - 0) sel_mux
+					out_ex_mem(2 downto 0),			-- (1 - 0) sel_mux
 					
 					
 				 q => out_mem_wb, --in do banco de registradores

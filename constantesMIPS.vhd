@@ -6,9 +6,10 @@ package constantesMIPS is
 
   constant FUNCT_WIDTH : natural := 6;
   constant OPCODE_WIDTH : natural := 6;
-  constant CONTROLWORD_WIDTH : natural := 11;
+  constant CONTROLWORD_WIDTH : natural := 14; --era 13  - era 11
   constant DATA_WIDTH : natural := 32;
   constant ADDR_WIDTH : natural := 32;
+  constant JMP_ADDR_WIDTH : natural := 26;
   constant REGBANK_ADDR_WIDTH : natural := 5;
   constant ALU_OP_WIDTH : natural := 3;
   constant CTRL_ALU_WIDTH : natural := 4;
@@ -22,6 +23,8 @@ package constantesMIPS is
 
    subtype dado_t        is std_logic_vector(DATA_WIDTH-1 downto 0);
    subtype addr_t        is std_logic_vector(ADDR_WIDTH-1 downto 0);
+	
+	subtype mux_2        is std_logic_vector(1 downto 0);
 --
     constant functADD : funct_t := "100000";
     constant functSUB : funct_t := "100010";
@@ -36,7 +39,20 @@ package constantesMIPS is
     constant opCodeBEQ           : opCode_t := "000100";
 --
     constant opCodeTipoJ         : opCode_t := "000010";
-
+	 
+	 constant opCodeAddI         	: opCode_t := "001000"; --(consertado - sem utilidade)errado olhar greencard
+	 constant opCodeAndI         	: opCode_t := "001100"; --(consertado - sem utilidade)errado olhar greencard
+	 constant opCodeOrI         	: opCode_t := "001101"; --(consertado - sem utilidade)errado olhar greencard
+	 
+	 
+	 constant opCodeLUI         	: opCode_t := "001111"; --(consertado - sem utilidade)errado olhar greencard
+	 
+	 
+	 constant opCodeJAL         	: opCode_t := "000011"; --(consertado DONE)errado olhar greencard
+	 
+	 
+	constant functJR					: funct_t := "001000"; --WIP
+	 
     -- ALU ---
     constant readFunctULA : aluOp_t := "000";
     constant aluOpAdd : aluOp_t := "001";
@@ -67,7 +83,7 @@ package constantesMIPS is
     -- 1: sel_mux_beq:          0 PC+4  1 PC+4+imediato
     -- 0: sel_mux_jump:         0 saida mux_beq 1 PC+4 & imediato
 
--- ControlWorld Bit:    10-8        7             6             5               4                3                 2                 1               0
+-- ControlWorld Bit:    10-8        7             6             5               4    -           3   -             2                 1               0
 --Instrução  Opcode     ALUop   escreve_RC   escreve_RAM   leitura_RAM   sel_mux_ula_mem   sel_mux_rd_rt   sel_mux_banco_ula    sel_mux_beq     sel_mux_jump
 --Tipo R    |00.0000  | read  |     1      |      0      |      X      |        0        |       1       |         0         |       0       |       0       |
 --J         |00.0010  | X     |     0      |      0      |      X      |        X        |       X       |         X         |       0       |       1       |
@@ -77,11 +93,21 @@ package constantesMIPS is
 
 --  Mux1: mux([PC+4, BEQ]/J);  Mux2: mux(Rt/Rd); Mux3: mux(Rt/imediato);  Mux4: mux(ULA/mem).
 
-    constant ctrlTipoR:      ctrlWorld_t := readFunctULA & "10X01000";
-    constant ctrlTipoJ:      ctrlWorld_t := aluOpDC & "00XXXX01";
-    constant ctrlTipoBEQ:    ctrlWorld_t := aluOpSub & "00XXX010";
-    constant ctrlTipoLW:     ctrlWorld_t := aluOpAdd & "10110100";
-    constant ctrlTipoSW:     ctrlWorld_t := aluOpAdd & "01XXX100";
+    constant ctrlTipoR:      ctrlWorld_t := readFunctULA & 	"10X00010000";
+    constant ctrlTipoJ:      ctrlWorld_t := aluOpDC & 		"00XXXXXX001";
+    constant ctrlTipoBEQ:    ctrlWorld_t := aluOpSub & 		"00XXXXX0100";
+    constant ctrlTipoLW:     ctrlWorld_t := aluOpAdd & 		"10101001000";
+    constant ctrlTipoSW:     ctrlWorld_t := aluOpAdd & 		"01XXXXX1000";
+	 
+	 
+	 
+	 
+-- EXTENSORES DE SINAIS 
+
+	constant zerosADiretira:	mux_2	:=	"10";
+	constant zerosAEsquerda:	mux_2	:= "01";
+	constant extensorNormal:	mux_2	:= "00";
+	constant trintaedoiszeros:	mux_2	:=	"11";
 
 end package constantesMIPS;
 

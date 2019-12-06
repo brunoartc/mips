@@ -31,6 +31,17 @@ architecture rtl of bancoRegistradores is
 	subtype register_t is std_logic_vector((larguraDados-1) downto 0);
 	type reg_bank_t is array(0 TO 2**larguraEndBancoRegs-1) of register_t;
 	
+      -- Cola dos valores iniciais no banco de registradores
+      -- $zero (#0) := 0x00
+      -- $t0 (#8)  := 0x00
+      -- $t1 (#9)  := 0x0A
+      -- $t2 (#10) := 0x0B
+      -- $t3 (#11) := 0x0C
+      -- $t4 (#12) := 0x0D
+      -- $t5 (#13) := 0x0E	
+	
+	
+	
 	function initMemory
         return reg_bank_t is variable tmp : reg_bank_t := (others => (others => '0'));
 	  begin

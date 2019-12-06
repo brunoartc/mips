@@ -89,7 +89,7 @@ pontosDeControleOut <= pontosDeControle;
     FD : entity work.fluxo_dados 
 	port map
 	(
-        clk	                    => clk, --key_clk
+        clk	                    => key_clk, --key_clk
         pontosDeControle        => pontosDeControle,
         instrucao               => instrucao,
 		  instrucao_saida         => instrucao_saida,

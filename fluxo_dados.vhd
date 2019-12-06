@@ -139,7 +139,7 @@ end_b_out <= out_if_id(20 downto 16);
 	 
 	 B_ULA <= saida_mux_banco_ula;
 
-    sel_mux_beq <= sel_beq AND Z_out;
+    sel_mux_beq <= out_ex_mem(3) AND out_ex_mem(38); --tava errado
 
     -- Ajuste do PC para jump (concatena com imediato multiplicado por 4)
     PC_4_concat_imed <= PC_mais_4(31 downto 28) & saida_shift_jump;
@@ -153,7 +153,7 @@ end_b_out <= out_if_id(20 downto 16);
         port map (
             enderecoA => out_if_id(25 downto 21), --isso ta errado (acho que nao)
             enderecoB => out_if_id(20 downto 16),
-            enderecoC => out_mem_wb(71 downto 67),
+            enderecoC => out_mem_wb(71 downto 67), -- 65 34
             clk          => clk,
             dadoEscritaC => saida_mux_ula_mem, 
             escreveC     => out_mem_wb(0),
@@ -276,7 +276,7 @@ end_b_out <= out_if_id(20 downto 16);
             larguraDado => 26
         )
 		port map (
-            shift_IN  => instrucao_s(25 downto 0),
+            shift_IN  => out_if_id(25 downto 0),
             shift_OUT => saida_shift_jump
         );
     
@@ -297,8 +297,8 @@ end_b_out <= out_if_id(20 downto 16);
             larguraDados => DATA_WIDTH
         )
 		port map (
-            entradaA => out_mem_wb(65 downto 34), --ta certo agr - saida da ula
-            entradaB => out_mem_wb(33 downto 2),  --  dado lido na memoria
+            entradaA => out_mem_wb(66 downto 35), --tava errado nao deu update ---- ta certo agr - saida da ula
+            entradaB => out_mem_wb(34 downto 3),  -- tava errado nao deu update  ----- dado lido na memoria
 				entradaC => PC_mais_4,
 				entradaD => PC_mais_8, --isso exiaste ?
             seletor  => out_mem_wb(2 downto 1), --tava 1 downto 0
@@ -456,11 +456,11 @@ end_b_out <= out_if_id(20 downto 16);
 			)
 			port map(
 				data => 
-					out_ex_mem(102 downto 71) & 	-- (102 - 71)
-					out_ex_mem(107 downto 103) & 	-- (70 - 66) saida_mux_rd_rt
-					out_ex_mem(102 downto 71) & 	-- (65 - 34) saida_ula
-					dado_lido_mem &					-- (33 - 2)
-					out_ex_mem(2 downto 0),			-- (1 - 0) sel_mux
+					out_ex_mem(102 downto 71) & 	-- (103 - 72)
+					out_ex_mem(107 downto 103) & 	-- (71 - 67) saida_mux_rd_rt
+					out_ex_mem(102 downto 71) & 	-- (66 - 35) saida_ula
+					dado_lido_mem &					-- (34 - 3)
+					out_ex_mem(2 downto 0),			-- (2 - 0) sel_mux & we
 					
 					
 				 q => out_mem_wb, --in do banco de registradores

@@ -74,7 +74,6 @@ begin
 				"000";
 				
 	sel_imed_zero_ext <= '1' when opcode = opCodeAddI or opcode = opCodeAndI or opcode = opCodeOrI else  --ori e andi sao zero & resto nao 
-				
 				'0';		
 				
 				
@@ -88,9 +87,9 @@ begin
 	
 				
 				
-	pontosDeControle <= ulaOp & habEscritaReg & habEscritaMem & habLeituraMem & muxUlaMem & muxRtRd & muxUlaBanc & muxBeq & muxJump;
+	pontosDeControle <=  sel_tipo_extensao & sel_imed_zero_ext & ulaOp & habEscritaReg & habEscritaMem & habLeituraMem & muxUlaMem & muxRtRd & muxUlaBanc & muxBeq & muxJump;
 				
-	 
+	 -- adicionei esses no ponto ^ de controle
 	 
 	 -- sw
 	 -- add

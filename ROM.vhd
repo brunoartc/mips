@@ -29,7 +29,7 @@ architecture assincrona OF ROM IS
       -- $t5 (#13) := 0x0E
 
             -- Inicializa os endereços:
-		  tmp(0) := x"AC09_0008"; --sw $t1 8($zero) (m(8) := 0x0A)  100011 00000 01001 x0008                         -- 0    8
+			tmp(0) := x"AC09_0008"; --sw $t1 8($zero) (m(8) := 0x0A)  100011 00000 01001 x0008                         -- 0    8
         tmp(1) := x"8C08_0008"; --lw $t0 8($zero) ($t0 := 0x0A)   100011 00000 01000 x0008                         -- 4    c
 		  tmp(2) := x"0000_0000";                                                                                    -- 8    10
         tmp(3) := x"012A_4022"; --sub $t0 $t1 $t2 ($t0 := 0xFF)   000000 01001 01010 01000 00000 100010            -- C    14
@@ -49,6 +49,8 @@ architecture assincrona OF ROM IS
 		  tmp(17) := x"0000_0000";                                                                                   -- 44   4c
         tmp(18) := x"0800_0001"; --j 0x01 (pc := #1)               000010 00 x000001	                            -- 48
 		  tmp(17) := x"0000_0000";
+
+
 		  
         return tmp;
     end initMemory;

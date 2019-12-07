@@ -64,7 +64,7 @@ architecture estrutural of fluxo_dados is
 	 
 	 -- Pipeline signals
 	 signal out_if_id : std_logic_vector(64-1 downto 0); 
-	 signal out_id_ex : std_logic_vector(150-1 downto 0); 
+	 signal out_id_ex : std_logic_vector(182-1 downto 0); 
 	 signal out_ex_mem : std_logic_vector(140-1 downto 0); 
 	 signal out_mem_wb : std_logic_vector(104-1 downto 0); 
 	 
@@ -103,16 +103,20 @@ architecture estrutural of fluxo_dados is
     alias RT_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s_saida(20 downto 16);
     alias RD_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s_saida(15 downto 11);
     alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao_s_saida(5 DOWNTO 0); --TODO possivelmente errado MAN NAO SEI MAIS
-    alias imediato  : std_logic_vector(15 downto 0) is instrucao_s(15 downto 0);
+    alias imediato  : std_logic_vector(15 downto 0) is instrucao_s_saida(15 downto 0); --mudei pro de saida
 	 alias funct_ula : std_logic_vector(FUNCT_WIDTH-1 downto 0) is out_id_ex(24 downto 19);
 	 
 	 
 	 -- Mux intermediario nao
 	 signal ZeroImediateMux, B : std_logic_vector(DATA_WIDTH-1 downto 0);
-	 signal sel_imed_zero_ext : std_logic;  --remove and use upper alias
-	 signal sel_tipo_extensao : std_logic_vector(1 downto 0);
+	 --signal sel_imed_zero_ext : std_logic;  --remove and use upper alias
+	 --signal sel_tipo_extensao : std_logic_vector(1 downto 0);
 	 
 	 signal dezeseisZeros : std_logic_vector(16-1 downto 0) := (others => '0');
+	 
+	 
+	 alias sel_imed_zero_ext : std_logic is pontosDeControle(14);
+	 alias sel_tipo_extensao : std_logic_vector(1 downto 0) is pontosDeControle(16 downto 15);
 	 
 
 
@@ -137,7 +141,7 @@ end_b_out <= out_if_id(20 downto 16);
 	 
 	 A_ULA <= out_id_ex(117 downto 86);
 	 
-	 B_ULA <= saida_mux_banco_ula;
+	 B_ULA <= B;
 
     sel_mux_beq <= out_ex_mem(3) AND out_ex_mem(38); --tava errado
 
@@ -168,7 +172,7 @@ end_b_out <= out_if_id(20 downto 16);
         )
 		port map (
             A   => out_id_ex(117 downto 86),--out_id_ex(117 downto 86),--, ---estranho ula travada
-            B   => saida_mux_banco_ula,--saida_mux_banco_ula,--saida_mux_banco_ula, -- anterior saida mux banco ula
+            B   => B,--saida_mux_banco_ula,--saida_mux_banco_ula, -- anterior saida mux banco ula
             ctr => ULActr,
             C   => saida_ula,
             Z   => Z_out
@@ -402,10 +406,13 @@ end_b_out <= out_if_id(20 downto 16);
 		ID_EX: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 2 registradores
-			larguraDados => 150 -- 110 era - 109
+			larguraDados => 182 -- 110 era - 109
 			)
 			port map(
 				data => 
+				
+					ZeroImediateMux &           -- (181 - 150)
+				
 					out_if_id(63 downto 32) & 	-- (149 - 118)
 					RA & 							   -- (117 - 86)
 					ULAop &							-- (85 - 83)
@@ -481,7 +488,7 @@ end_b_out <= out_if_id(20 downto 16);
         )
 		port map (
             entradaA => saida_mux_banco_ula,      
-            entradaB => ZeroImediateMux,
+            entradaB => out_id_ex(181 downto 150),
             seletor  => sel_imed_zero_ext,
             saida    => B      --  oque entra na ula dependendo as cosias 
         ); 

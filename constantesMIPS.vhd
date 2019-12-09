@@ -6,7 +6,7 @@ package constantesMIPS is
 
   constant FUNCT_WIDTH : natural := 6;
   constant OPCODE_WIDTH : natural := 6;
-  constant CONTROLWORD_WIDTH : natural := 18;  --era 17
+  constant CONTROLWORD_WIDTH : natural := 19;  --era 18
   constant DATA_WIDTH : natural := 32;
   constant ADDR_WIDTH : natural := 32;
   constant JMP_ADDR_WIDTH : natural := 26;
@@ -37,6 +37,7 @@ package constantesMIPS is
     constant opCodeLW            : opCode_t := "100011";
     constant opCodeSW            : opCode_t := "101011";
     constant opCodeBEQ           : opCode_t := "000100";
+	 constant opCodeBNE           : opCode_t := "000101";
 --
     constant opCodeTipoJ         : opCode_t := "000010";
 	 
@@ -93,11 +94,11 @@ package constantesMIPS is
 
 --  Mux1: mux([PC+4, BEQ]/J);  Mux2: mux(Rt/Rd); Mux3: mux(Rt/imediato);  Mux4: mux(ULA/mem).
 
-    constant ctrlTipoR:      ctrlWorld_t := readFunctULA & 	"XX010X000101000";
-    constant ctrlTipoJ:      ctrlWorld_t := aluOpDC & 		"XX000XXXXXX0001";
-    constant ctrlTipoBEQ:    ctrlWorld_t := aluOpSub & 		"XX000XXXXX00100";
-    constant ctrlTipoLW:     ctrlWorld_t := aluOpAdd & 		"XX0101010010000";
-    constant ctrlTipoSW:     ctrlWorld_t := aluOpAdd & 		"XX001XXXXX10000";
+    constant ctrlTipoR:      ctrlWorld_t := readFunctULA & 	"XX010X0001010000";
+    constant ctrlTipoJ:      ctrlWorld_t := aluOpDC & 		"XX000XXXXXX00001";
+    constant ctrlTipoBEQ:    ctrlWorld_t := aluOpSub & 		"XX000XXXXX001000";
+    constant ctrlTipoLW:     ctrlWorld_t := aluOpAdd & 		"XX01010100100000";
+    constant ctrlTipoSW:     ctrlWorld_t := aluOpAdd & 		"XX001XXXXX100000";
 	 
 	 
 	 

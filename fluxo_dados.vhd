@@ -65,8 +65,8 @@ architecture estrutural of fluxo_dados is
 	 
 	 -- Pipeline signals
 	 signal out_if_id : std_logic_vector(64-1 downto 0); 
-	 signal out_id_ex : std_logic_vector(183-1 downto 0); 
-	 signal out_ex_mem : std_logic_vector(141-1 downto 0); 
+	 signal out_id_ex : std_logic_vector(184-1 downto 0); 
+	 signal out_ex_mem : std_logic_vector(142-1 downto 0); 
 	 signal out_mem_wb : std_logic_vector(104-1 downto 0); 
 	 
 	 signal inMemEx : std_logic_vector(110-1 downto 0); --era 109
@@ -78,18 +78,19 @@ architecture estrutural of fluxo_dados is
     -- Codigos da palavra de controle:
 	 --alias sel_tipo_extensao : std_logic_vector is pontosDeControle(15 downto 14); Para as instrucoes do tipo I
 	 --alias sel_imed_zero_ext : std_logic is pontosDeControle(13);
-    alias ULAop             : std_logic_vector(ALU_OP_WIDTH-1 downto 0) is pontosDeControle(14 downto 12); --era 10 downto 8
-    alias escreve_RC        : std_logic is pontosDeControle(11); --era 7
-    alias escreve_RAM       : std_logic is pontosDeControle(10); --era 6
-    alias leitura_RAM       : std_logic is pontosDeControle(9); --era 5
+    alias ULAop             : std_logic_vector(ALU_OP_WIDTH-1 downto 0) is pontosDeControle(15 downto 13); --era 10 downto 8
+    alias escreve_RC        : std_logic is pontosDeControle(12); --era 7
+    alias escreve_RAM       : std_logic is pontosDeControle(11); --era 6
+    alias leitura_RAM       : std_logic is pontosDeControle(10); --era 5
     
 	 
-	 alias sel_mux_ula_mem   : std_logic_vector is pontosDeControle(8 downto 7); --  era 6 e 5  - mudado era 4 e std_loc
-    alias sel_mux_rd_rt     : std_logic_vector is pontosDeControle(6 downto 5); --   era 4 e 3 - mudado era 3 e std_logic
+	 alias sel_mux_ula_mem   : std_logic_vector is pontosDeControle(9 downto 8); --  era 6 e 5  - mudado era 4 e std_loc
+    alias sel_mux_rd_rt     : std_logic_vector is pontosDeControle(7 downto 6); --   era 4 e 3 - mudado era 3 e std_logic
     
 	 
-	 alias sel_mux_banco_ula : std_logic is pontosDeControle(4); --2
-    alias sel_beq           : std_logic_vector is pontosDeControle(3 downto 2); --era 1
+	 alias sel_mux_banco_ula : std_logic is pontosDeControle(5); --2
+    alias sel_beq           : std_logic_vector is pontosDeControle(4 downto 3); --era 1
+	 alias bne					 : std_logic is pontosDeControle(2); -- novo
     alias sel_mux_jump      : std_logic_vector is pontosDeControle(1 downto 0); --era 0
 	 
 	
@@ -105,7 +106,7 @@ architecture estrutural of fluxo_dados is
     alias RD_addr   : std_logic_vector(REGBANK_ADDR_WIDTH-1 downto 0) is instrucao_s_saida(15 downto 11);
     alias funct     : std_logic_vector(FUNCT_WIDTH-1 downto 0) is  instrucao_s_saida(5 DOWNTO 0); --TODO possivelmente errado MAN NAO SEI MAIS
     alias imediato  : std_logic_vector(15 downto 0) is instrucao_s_saida(15 downto 0); --mudei pro de saida
-	 alias funct_ula : std_logic_vector(FUNCT_WIDTH-1 downto 0) is out_id_ex(25 downto 20);
+	 alias funct_ula : std_logic_vector(FUNCT_WIDTH-1 downto 0) is out_id_ex(26 downto 21);
 	 
 	 
 	 -- Mux intermediario nao
@@ -140,16 +141,16 @@ end_b_out <= out_if_id(20 downto 16);
 	 
 	 ULActr_out <= ULActr;
 	 
-	 A_ULA <= out_id_ex(118 downto 87);
+	 A_ULA <= out_id_ex(119 downto 88);
 	 
 	 B_ULA <= B;
 	 
 	 out_mux_beq <= saida_mux_beq;
 
-    sel_mux_beq <= 	"01" when  ((out_ex_mem(4 downto 3) = "01") AND (out_ex_mem(39) = '1')) else -- beq
-							"10" when (out_ex_mem(4 downto 3) = "10") else 										 -- jr
-							"00"; 											--tava errado
-
+    sel_mux_beq <= 	"01" when  (((out_ex_mem(5 downto 4) = "01") AND (out_ex_mem(40) = '1')) or out_id_ex(3) = '1') else -- beq & bne
+							"10" when (out_ex_mem(5 downto 4) = "10") else 																		  -- jr
+							"00"; 										
+							
     -- Ajuste do PC para jump (concatena com imediato multiplicado por 4)
     PC_4_concat_imed <= PC_mais_4(31 downto 28) & saida_shift_jump;
 
@@ -176,7 +177,7 @@ end_b_out <= out_if_id(20 downto 16);
             NUM_BITS => DATA_WIDTH
         )
 		port map (
-            A   => out_id_ex(118 downto 87),--out_id_ex(117 downto 86),--, ---estranho ula travada
+            A   => out_id_ex(119 downto 88),--out_id_ex(117 downto 86),--, ---estranho ula travada
             B   => B,--saida_mux_banco_ula,--saida_mux_banco_ula, -- anterior saida mux banco ula
             ctr => ULActr,
             C   => saida_ula,
@@ -187,7 +188,7 @@ end_b_out <= out_if_id(20 downto 16);
         port map
         (
             funct  => funct_ula,    --achei eh aqui que ta errado era funct antes
-            ALUop  => out_id_ex(86 downto 84),
+            ALUop  => out_id_ex(87 downto 85),
             ALUctr => ULActr
         );
      
@@ -210,7 +211,7 @@ end_b_out <= out_if_id(20 downto 16);
         )
 		port map (
             entradaA => entrada_somador_beq,
-            entradaB => out_id_ex(150 downto 119),
+            entradaB => out_id_ex(151 downto 120),
             saida    => PC_mais_4_mais_imediato
         );
     
@@ -251,11 +252,11 @@ end_b_out <= out_if_id(20 downto 16);
             addrWidth => ADDR_WIDTH
         )
 		port map (
-            endereco    => out_ex_mem(103 downto 72), 
-            we          => out_ex_mem(6), 
-            re          => out_ex_mem(5),
+            endereco    => out_ex_mem(104 downto 73), 
+            we          => out_ex_mem(7), 
+            re          => out_ex_mem(6),
             clk         => clk,
-            dado_write  => out_ex_mem(71 downto 40),
+            dado_write  => out_ex_mem(72 downto 41),
             dado_read   => dado_lido_mem
         ); 
 
@@ -275,7 +276,7 @@ end_b_out <= out_if_id(20 downto 16);
             larguraDado => DATA_WIDTH
         )
 		port map (
-            shift_IN  => out_id_ex(51 downto 20) ,
+            shift_IN  => out_id_ex(52 downto 21) ,
             shift_OUT => entrada_somador_beq
         );
     
@@ -332,11 +333,11 @@ end_b_out <= out_if_id(20 downto 16);
             larguraDados => REGBANK_ADDR_WIDTH
         )
 		port map (
-            entradaA => out_id_ex(19 downto 15), 
-            entradaB => out_id_ex(14 downto 10),
+            entradaA => out_id_ex(20 downto 16), 
+            entradaB => out_id_ex(15 downto 11),
 				entradaC => "11111",
 				entradaD => (others => 'X'),
-            seletor  => out_id_ex(8 downto 7),
+            seletor  => out_id_ex(9 downto 8),
             saida    => saida_mux_rd_rt
         );
 		  
@@ -348,9 +349,9 @@ end_b_out <= out_if_id(20 downto 16);
             larguraDados => DATA_WIDTH
         )
 		port map (
-            entradaA => out_id_ex(83 downto 52), 
-            entradaB => out_id_ex(51 downto 20),  
-            seletor  => out_id_ex(9), --errado ? nao sei      
+            entradaA => out_id_ex(84 downto 53), 
+            entradaB => out_id_ex(52 downto 21),  
+            seletor  => out_id_ex(10), --errado ? nao sei      
             saida    => saida_mux_banco_ula
         );
 		
@@ -360,10 +361,10 @@ end_b_out <= out_if_id(20 downto 16);
         )
 		port map (
             entradaA => PC_mais_4,
-            entradaB => out_ex_mem(38 downto 7), -- sel = 01
-            entradaC => out_id_ex(118 downto 87), --RA sel = 10
+            entradaB => out_ex_mem(39 downto 8), -- sel = 01
+            entradaC => out_id_ex(119 downto 88), --RA sel = 10
 				entradaD => (others => 'X'),
-				seletor  => out_id_ex(4 downto 3),
+				seletor  => out_id_ex(5 downto 4),
             saida    => saida_mux_beq
         );
 		
@@ -413,25 +414,26 @@ end_b_out <= out_if_id(20 downto 16);
 		ID_EX: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 2 registradores
-			larguraDados => 183 -- 182 -- 110 era - 109
+			larguraDados => 184	-- 183 -- 182 -- 110 era - 109
 			)
 			port map(
 				data => 
 				
-					ZeroImediateMux &           -- (182 - 151)
+					ZeroImediateMux &           -- (183 - 152)
 				
-					out_if_id(63 downto 32) & 	-- (150 - 119)
-					RA & 							   -- (118 - 87)
-					ULAop &							-- (86 - 84)
-					RB & 								-- (83 - 52)
-					sinal_ext &						-- (51 - 20)
-					out_if_id(20 downto 16) &  -- (19 - 15)
-					out_if_id(15 downto 11) &	-- (14 - 10)
-					sel_mux_banco_ula &			-- (9)
-					sel_mux_rd_rt &				-- (8 - 7)
-					escreve_RAM &					-- (6)
-					leitura_RAM &					-- (5)
-					sel_beq &						-- (4 - 3) --
+					out_if_id(63 downto 32) & 	-- (151 - 120)
+					RA & 							   -- (119 - 88)
+					ULAop &							-- (87 - 85)
+					RB & 								-- (84 - 53)
+					sinal_ext &						-- (52 - 21)
+					out_if_id(20 downto 16) &  -- (20 - 16)
+					out_if_id(15 downto 11) &	-- (15 - 11)
+					sel_mux_banco_ula &			-- (10)
+					sel_mux_rd_rt &				-- (9 - 8)
+					escreve_RAM &					-- (7)
+					leitura_RAM &					-- (6)
+					sel_beq &						-- (5 - 4) --
+					bne &								-- (3)
 					sel_mux_ula_mem &				-- (2 - 1)
 					escreve_RC,						-- (0)
 					
@@ -445,17 +447,17 @@ end_b_out <= out_if_id(20 downto 16);
 		  EX_MEM: entity work.registradorGenerico
         generic map (
 		  -- 11 <- CONTROLWORD_WIDTH , 32 <- DATA_WIDTH , 33 saida ula
-			larguraDados => 141 -- era 78
+			larguraDados => 142 -- 141 -- era 78
 			)
 			port map(
 				data => 
-					out_id_ex(150 downto 119) & 	-- (140 - 109)
-					saida_mux_rd_rt &					-- (108 - 104)
-					saida_ula &							-- (103 - 72)
-					out_id_ex(83 downto 52) & -- RB  (71 - 40)
-					Z_out &								--	(39)
-					PC_mais_4_mais_imediato &		-- (38 - 7)	
-					out_id_ex(6 downto 0),			-- (6 - 0)
+					out_id_ex(151 downto 120) & 	-- (141 - 110)
+					saida_mux_rd_rt &					-- (109 - 105)
+					saida_ula &							-- (104 - 73)
+					out_id_ex(84 downto 53) & -- RB  (72 - 41)
+					Z_out &								--	(40)
+					PC_mais_4_mais_imediato &		-- (39 - 8)	
+					out_id_ex(7 downto 0),			-- (7 - 0)
 					
 				 q => out_ex_mem,
 				 enable => '1',
@@ -470,9 +472,9 @@ end_b_out <= out_if_id(20 downto 16);
 			)
 			port map(
 				data => 
-					out_ex_mem(103 downto 72) & 	-- (103 - 72)
-					out_ex_mem(108 downto 104) & 	-- (71 - 67) saida_mux_rd_rt
-					out_ex_mem(103 downto 72) & 	-- (66 - 35) saida_ula
+					out_ex_mem(104 downto 73) & 	-- (103 - 72)
+					out_ex_mem(109 downto 105) & 	-- (71 - 67) saida_mux_rd_rt
+					out_ex_mem(104 downto 73) & 	-- (66 - 35) saida_ula
 					dado_lido_mem &					-- (34 - 3)
 					out_ex_mem(2 downto 0),			-- (2 - 0) sel_mux & we
 					
@@ -495,7 +497,7 @@ end_b_out <= out_if_id(20 downto 16);
         )
 		port map (
             entradaA => saida_mux_banco_ula,      
-            entradaB => out_id_ex(182 downto 151),
+            entradaB => out_id_ex(183 downto 152),
             seletor  => sel_imed_zero_ext,
             saida    => B      --  oque entra na ula dependendo as cosias 
         ); 

@@ -21,7 +21,8 @@ entity mips is
       A_ULA							: OUT std_logic_vector(DATA_WIDTH-1 downto 0);
 		  B_ULA							: OUT std_logic_vector(DATA_WIDTH-1 downto 0);
 		  end_a_out                : OUT std_logic_vector(4 downto 0);
-		  end_b_out                : OUT std_logic_vector(4 downto 0)
+		  end_b_out                : OUT std_logic_vector(4 downto 0);
+		  out_mux_beq					: OUT std_logic_vector(DATA_WIDTH-1 downto 0)
 		  
     );
 end entity;

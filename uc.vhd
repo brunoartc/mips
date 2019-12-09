@@ -18,8 +18,8 @@ end entity;
 architecture bhv of uc is
 
 
-SIGNAL muxBeq, habEscritaReg, muxRtimediato,  beq, habLeituraMem,habEscritaMem,  muxUlaBanc, sel_imed_zero_ext : STD_LOGIC;
-SIGNAL muxJump, muxRtRd, muxUlaMem, sel_tipo_extensao : STD_LOGIC_VECTOR(1 downto 0); --mux jump adicionado, era std logic vector
+SIGNAL habEscritaReg, muxRtimediato,  beq, habLeituraMem,habEscritaMem,  muxUlaBanc, sel_imed_zero_ext : STD_LOGIC;
+SIGNAL muxBeq, muxJump, muxRtRd, muxUlaMem, sel_tipo_extensao : STD_LOGIC_VECTOR(1 downto 0); --mux jump adicionado, era std logic vector
 SIGNAL ulaOp : STD_LOGIC_VECTOR(2 DOWNTO 0);
 begin
     --process(opcode)
@@ -40,8 +40,9 @@ begin
 					-- "10" when funct = functJR else   ---precisa ser funct TODO: ARRUMAR UM MEIO !!!!!!!!!!!tirei
 					"00"; 
 							
-	muxBeq <= 	'1' when opcode = opCodeBEQ else
-							'0';
+	muxBeq <= 	"01" when opcode = opCodeBEQ else
+					"10" when (opcode = opCodeTipoR and funct = functJR) else
+					"00";
 	
 	muxRtRd <= 	"01" when opcode = opCodeTipoR else --mudar era '1' e '0'
 					"10" when opcode = opCodeJAL else -- naop existia agora pra jal pra selecionar o 31
